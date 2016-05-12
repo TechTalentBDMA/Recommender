@@ -6,12 +6,7 @@ import java.util.Properties;
 
 public class PropertiesLoader {
 	
-	public static final String PROPERTIES_LOADER_TIKA_LOCATION= "tikaPath";
-	public static final String PROPERTIES_LOADER_MOZILLA_CRAWLER_DOWNLOAD_PATH ="mozillaCrawlerDownloadPath";
-	public static final String PROPERTIES_LOADER_MOZILLA_SQLITE_DRIVER="mozillaSQLITEDriver";
-	public static final String PROPERTIES_LOADER_MOZILLA_BBDD_LOCATION="mozillaBBBDDLocation";
-	public static final String PROPERTIES_LOADER_WATCHGUARD_LOCATION="watchguardPath";
-
+	public static final String PROPERTIES_LOADER_NEO4J_LOCATION= "neo4JDB";
 
 	private static PropertiesLoader instance = null;
 	Properties prop = new Properties();
