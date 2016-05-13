@@ -1,0 +1,27 @@
+SELECT 
+		DISTINCT
+		(concat('CREATE ('
+		,REPLACE(str(?director), 'http://www.wikidata.org/entity/', '')
+		,':Person {id:"'
+		,REPLACE(str(?director), 'http://www.wikidata.org/entity/', '')
+		,'", name:"'
+		,?directorLabel
+		,'", born: '
+        ,str(day(?dateOfBirth)), '/', str(month(?dateOfBirth)), '/', str(year(?dateOfBirth))
+		,'})') as ?NodePerson)
+ WHERE 
+{
+		# Film
+		?film				wdt:P31 			wd:Q11424 .
+		?film				rdfs:label 			?filmLabel .
+		# Actor
+		# wd:Q43416 -> Keanu Reeves
+		?film				wdt:P161			wd:Q43416 .
+		wd:Q43416			rdfs:label			?actorLabel .
+  		?film 				wdt:P57				?director .
+  		?director			rdfs:label			?directorLabel .
+  		?director			wdt:P569			?dateOfBirth
+		FILTER (lang(?filmLabel) = "en") .
+  		FILTER (lang(?directorLabel) = "en") .
+}
+ORDER BY ?directorLabel

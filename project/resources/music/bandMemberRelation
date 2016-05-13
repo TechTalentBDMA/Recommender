@@ -1,0 +1,20 @@
+SELECT
+		?memberOf ?band ?memberOfLabel ?bandLabel
+		(concat('('
+		,REPLACE(str(?memberOf), "http://www.wikidata.org/entity/", "")
+		,')-[:IS_MEMBER_OF]->('
+		,REPLACE(str(?band), "http://www.wikidata.org/entity/", "")
+		,'),') AS ?memberOfBand)
+ WHERE
+{
+		?band			wdt:P31			wd:Q215380 .
+		?band			rdfs:label		?bandLabel .
+  		?band			wdt:P527		?memberOf .
+		?memberOf		rdfs:label		?memberOfLabel .
+
+  		FILTER (lang(?memberOfLabel) = 'en') .
+  		FILTER (lang(?bandLabel) = 'en') .
+  		#FILTER(str(?bandLabel)="Coldplay") .
+}
+GROUP BY ?memberOf ?band ?memberOfLabel ?bandLabel
+ORDER BY ?memberOfLabel

@@ -1,0 +1,44 @@
+SELECT
+        (concat('MATCH ('
+		,'p:Person {id:"'
+		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
+		,'"}) SET '
+		,'p.occupation = '
+		,concat('["', group_concat(?occupationLabel; separator='","'),'"]')
+		,' RETURN p') as ?InsertOccupationIntoNodePerson)
+ WHERE
+{
+        SELECT
+                ?actor ?actorLabel ?dateOfBirth ?occupationLabel
+         WHERE 
+        {
+                # Film
+                ?film			wdt:P31 			wd:Q11424 .
+                ?film			rdfs:label 			?filmLabel .
+                # Actor
+                # wd:Q43416 -> Keanu Reeves
+				?film			wdt:P161			wd:Q43416 .
+				?film 			wdt:P161 			?actor .
+				?actor 			rdfs:label 			?actorLabel .
+                ?actor			wdt:P106			?occupation .
+                ?occupation		rdfs:label			?occupationLabel .
+			OPTIONAL {
+				?actor			wdt:P569			?dateOfBirth .
+			}
+			OPTIONAL {
+				?actor 				p:P569							?propdateOfBirth .
+				?propdateOfBirth	ps:P569							?dateOfBirth .
+				?propdateOfBirth	prov:wasDerivedFrom/pr:P813		?retrieved .
+			}
+			OPTIONAL {
+				?actor 				p:P569							?propdateOfBirth .
+				?propdateOfBirth	ps:P569							?dateOfBirth .
+				?propdateOfBirth	prov:wasDerivedFrom/pr:P143		?importedFrom .
+			}
+				FILTER (lang(?actorLabel) = 'en') .
+                FILTER (lang(?occupationLabel) = "en") .
+        }
+        GROUP BY ?actor ?actorLabel ?dateOfBirth ?occupationLabel
+}
+GROUP BY ?actor ?actorLabel ?dateOfBirth
+ORDER BY ?actorLabel

@@ -1,5 +1,8 @@
 package upc.bdam.recommender.connection.http;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -12,20 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class HttpURLConnector {
 
 	
-	String query1="SELECT	* WHERE {"+
-	"	?book			wdt:P31			wd:Q571 ."+
-	" ?book			wdt:P50			?author ."+
-	" ?author			rdfs:label		?authorLabel ."+
-	" ?book			rdfs:label		?titleLabel ."+
-	" ?book			wdt:P136		?genre ."+
-	" ?genre			rdfs:label		?genreLabel ."+
-	" ?book			wdt:P577		?publicationDate ."+
-	" FILTER(lang(?authorLabel) = \"en\") ."+
-	" FILTER(lang(?titleLabel) = \"en\") ."+
-	" FILTER(lang(?genreLabel) = \"en\") ."+
-	" FILTER(str(?authorLabel) = \"Paulo Coelho\") ."+
-	" FILTER(str(?titleLabel) = \"The Alchemist\") ."+		
-	" BIND(str(year(?publicationDate)) AS ?release) } limit 100";
 	
 	String query="SELECT"+
 	" ?titleLabel"+
@@ -85,7 +74,8 @@ public class HttpURLConnector {
 	
 	public void write(){
 		try{
-			String content = "https://query.wikidata.org/sparql?format=json&query=" + URLEncoder.encode(query, "UTF-8");
+			String nodeBook=this.readQuery();
+			String content = "https://query.wikidata.org/sparql?format=json&query=" + URLEncoder.encode(nodeBook, "UTF-8");
 		URL url = new URL(content);
 
 		URLConnection urlConnection = url.openConnection();
@@ -104,8 +94,6 @@ public class HttpURLConnector {
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		String jsonInString = "{'name' : 'mkyong'}";
-
 		//JSON from file to Object
 		//RdfResult user = mapper.readValue(new File("c:\\user.json"), ].class);
 
@@ -123,5 +111,33 @@ public class HttpURLConnector {
 	public static void main(String arg[]){
 		HttpURLConnector con=new HttpURLConnector();
 		con.write();
+	}
+	
+	public String readQuery(){
+		BufferedReader br=null;
+		String everything=new String();
+		try {
+//			br = new BufferedReader(new FileReader("C:\\Users\\sorel\\git\\upc\\Recommender\\project\\resources\\books\\nodeAuthor"));
+			br = new BufferedReader(new FileReader("C:\\Users\\sorel\\git\\upc\\Recommender\\project\\resources\\films\\ocupationRole"));
+		    StringBuilder sb = new StringBuilder();
+		    String line = br.readLine();
+
+		    while (line != null) {
+		        sb.append(line);
+		        sb.append(System.lineSeparator());
+		        line = br.readLine();
+		    }
+		    everything = sb.toString();
+			br.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			
+		}
+		return everything;
 	}
 }

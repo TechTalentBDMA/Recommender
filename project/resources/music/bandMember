@@ -1,0 +1,50 @@
+SELECT
+		(concat('CREATE ('
+		,REPLACE(str(?memberOf), "http://www.wikidata.org/entity/", "")
+		,':Person {'
+		,'id:"'
+		,REPLACE(str(?memberOf), "http://www.wikidata.org/entity/", "")
+		,'", name:"'
+		,?memberOfLabel
+		,'", occupation:'
+		,(concat('["', group_concat(?occupationLabel; separator='","'),'"]'))
+		,', born: "'
+        ,str(day(?dateOfBirth)), "/", str(month(?dateOfBirth)), "/", str(year(?dateOfBirth))
+		,'"})') as ?NodePerson)
+ WHERE
+{
+		{SELECT
+				?band
+         WHERE
+        {
+                ?band			wdt:P31			wd:Q215380 .
+                ?band			rdfs:label		?bandLabel .
+                ?band			wdt:P136		?genre .
+                ?genre			rdfs:label		?genreLabel .
+
+                FILTER(lang(?bandLabel) = 'en') .
+                FILTER(lang(?genreLabel) = 'en') .
+                #FILTER regex(str(?genreLabel), 'pop') .
+                #FILTER(str(?bandLabel)='Chrome') .
+                #FILTER(str(?bandLabel)="Coldplay") .
+                #FILTER(str(?bandLabel)="LMFAO") .
+        }
+		GROUP BY
+				?band
+		}
+		?band			wdt:P31			wd:Q215380 .
+		?band			rdfs:label		?bandLabel .
+  		?band			wdt:P527		?memberOf .
+		?memberOf		rdfs:label		?memberOfLabel .
+  		?memberOf		wdt:P569		?dateOfBirth .
+  		?memberOf		wdt:P106		?occupation .
+		?occupation		rdfs:label		?occupationLabel .
+
+  		FILTER (lang(?bandLabel) = 'en') .
+  		FILTER (lang(?memberOfLabel) = 'en') .
+  		FILTER (lang(?occupationLabel) = 'en') .
+}
+GROUP BY
+		?memberOf ?memberOfLabel ?dateOfBirth
+ORDER BY
+		?memberOfLabel

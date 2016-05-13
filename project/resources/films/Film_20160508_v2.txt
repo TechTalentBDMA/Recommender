@@ -1,0 +1,408 @@
+#####################
+#### Node: FILM  #### It doesn't work
+#####################
+SELECT		
+		(concat(
+		 "CREATE ("
+		,REPLACE(?film, " ", "")
+		,":Film {title: '"
+		,?filmLabel
+		,"', released: "
+		,?released
+		,", genre: "
+		,?genreLabelGroupBy
+		,"})"
+		) AS ?NODE_FILM)
+ WHERE		
+{
+		SELECT
+                ?film
+				?filmLabel
+                ?released
+				(concat("['", group_concat(?genreLabel; separator="','"),"']") AS ?genreLabelGroupBy)
+         WHERE
+		{
+				SELECT
+						?film
+						?filmLabel
+						?released
+						?genreLabel
+						?countryOriginLabel
+				 WHERE
+				{
+						{SELECT 						
+								distinct
+								?film
+								?filmLabel						
+								(str(year(?publicationDate)) AS ?released)
+								?genreLabel
+								?countryOriginLabel
+								?countryPublicationLabel
+								?country
+						 WHERE {						
+								?film					wdt:P31 			wd:Q11424 .
+								?film					rdfs:label 			?filmLabel .
+								# wd:Q43416 -> Keanu Reeves						
+								?film					wdt:P161			wd:Q43416 .
+							OPTIONAL {
+								?film					wdt:P136 			?genre .
+								?genre 					rdfs:label 			?genreLabel .
+								FILTER (lang(?genreLabel) 				= "en") .			
+							}  		
+							OPTIONAL {
+								?film					wdt:P495			?countryOrigin .
+								?countryOrigin			rdfs:label			?countryOriginLabel .
+								FILTER (lang(?countryOriginLabel)		= "en") .
+							}  		
+							OPTIONAL {
+								?film					wdt:P577			?publicationDate .
+							}  		
+							OPTIONAL {
+								?film 					p:P577				?propPublicationDate .
+								?propPublicationDate	ps:P577				?publicationDate .
+								?propPublicationDate	pq:P291				?countryPublication .	
+								?countryPublication		rdfs:label			?countryPublicationLabel .	
+								FILTER (lang(?countryPublicationLabel)	= "en")  .
+							}
+								FILTER (lang(?filmLabel) 				= "en") .			
+								#FILTER (str(?filmLabel) 				= "Providence") .
+								#FILTER (BOUND(?countryPublicationLabel)) .
+								BIND(IF(!BOUND(?countryPublicationLabel), 1, IF(?countryOriginLabel = ?countryPublicationLabel, 1, 0)) AS ?country) .
+						}}
+						FILTER (?country = 1)
+				}
+		}
+		GROUP BY ?film ?filmLabel ?released
+}
+ORDER BY ?filmLabel
+
+#####################
+#### Node: FILM  #### It works (without space and tabs)
+#####################
+SELECT
+(concat(
+'CREATE ('
+,REPLACE(str(?film), "http://www.wikidata.org/entity/", "")
+,':Film {'
+,'id: "'
+,REPLACE(str(?film), "http://www.wikidata.org/entity/", "")
+,'" title: "'
+,?filmLabel
+,'", released: '
+,?released
+#,', genre: '
+#,?genreLabelGroupBy
+,IF(?genreLabelGroupBy = '[""]', "", concat(", genre: ", ?genreLabelGroupBy))
+,'})'
+) AS ?NODE_FILM)
+WHERE
+{
+SELECT		
+?film
+?filmLabel
+?genreLabelGroupBy
+(MIN(?released) AS ?released)
+WHERE		
+{
+SELECT
+?film
+?filmLabel
+?released
+#(concat("['", group_concat(?genreLabel; separator="','"),"']") AS ?genreLabelGroupBy)
+(concat('["', group_concat(?genreLabel; separator='","'),'"]') AS ?genreLabelGroupBy)
+WHERE
+{
+SELECT
+?film
+?filmLabel
+?released
+?genreLabel
+?countryOriginLabel
+WHERE
+{
+{SELECT 						
+distinct
+?film
+?filmLabel						
+(str(year(?publicationDate)) AS ?released)
+?genreLabel
+?countryOriginLabel
+?countryPublicationLabel
+?country
+WHERE {						
+?film					wdt:P31 			wd:Q11424 .
+?film					rdfs:label 			?filmLabel .
+# wd:Q43416 -> Keanu Reeves						
+?film					wdt:P161			wd:Q43416 .
+OPTIONAL {
+?film					wdt:P136 			?genre .
+?genre 					rdfs:label 			?genreLabel .
+FILTER (lang(?genreLabel) 				= "en") .			
+}  		
+OPTIONAL {
+?film					wdt:P495			?countryOrigin .
+?countryOrigin			rdfs:label			?countryOriginLabel .
+FILTER (lang(?countryOriginLabel)		= "en") .
+}  		
+OPTIONAL {
+?film					wdt:P577			?publicationDate .
+}  		
+OPTIONAL {
+?film 					p:P577				?propPublicationDate .
+?propPublicationDate	ps:P577				?publicationDate .
+?propPublicationDate	pq:P291				?countryPublication .	
+?countryPublication		rdfs:label			?countryPublicationLabel .	
+FILTER (lang(?countryPublicationLabel)	= "en")  .
+}
+FILTER (lang(?filmLabel) 				= "en") .			
+#FILTER (str(?filmLabel) 				= "Providence") .
+#FILTER (BOUND(?countryPublicationLabel)) .
+BIND(IF(!BOUND(?countryPublicationLabel), 1, IF(?countryOriginLabel = ?countryPublicationLabel, 1, 0)) AS ?country) .
+}}
+FILTER (?country = 1)
+}
+}
+GROUP BY ?film ?filmLabel ?released
+}
+GROUP BY
+?film ?filmLabel ?genreLabelGroupBy
+}
+ORDER BY ?filmLabel
+
+#######################################
+#### Relation: ACTOR - FILM - ROLE ####
+#######################################
+SELECT								
+		#(concat("(", ?actorLabel, ")-[:ACTED_IN {roles:['", ?roleLabel, "']}]->(", ?filmLabel, "),") AS ?ActorRoleFilm)						
+		#?filmLabel ?actorLabel ?roleLabel ?sum
+		?ActorRoleFilm
+ WHERE								
+{								
+  		?film			wdt:P31			wd:Q11424 .
+		?film			rdfs:label		?filmLabel .	
+  		# wd:Q43416 -> Keanu Reeves						
+  		?film			wdt:P161		wd:Q43416 .
+  		?film 			wdt:P161 		?actor .	
+  		?actor 			rdfs:label 		?actorLabel .	
+	OPTIONAL {							
+  		?film 			p:P161			?statement .
+  		?statement		ps:P161 		?actor .		
+  		?statement		pq:P453			?role .	
+  		?role			rdfs:label		?roleLabel .	
+  		FILTER (lang(?roleLabel) = 'en') .  						
+	}							
+  		FILTER (lang(?actorLabel) = 'en') .						
+  		FILTER (lang(?filmLabel) = 'en') .						
+  		#FILTER (str(?filmLabel) = "Bram Stoker's Dracula") .						
+  		#BIND(if(bound(?role), 0, 1) AS ?sum)
+		BIND(if(bound(?roleLabel),
+           		concat('(', replace(str(?actor), 'http://www.wikidata.org/entity/', ''), ')-[:ACTED_IN {roles:["', ?roleLabel, '"]}]->(', replace(str(?film), 'http://www.wikidata.org/entity/', ''), '),'),
+           		concat('(', replace(str(?actor), 'http://www.wikidata.org/entity/', ''), ')-[:ACTED_IN]->(', replace(str(?film), 'http://www.wikidata.org/entity/', ''), '),'))
+          AS ?ActorRoleFilm) .
+}
+ORDER BY ?filmLabel ?actorLabel
+
+####################
+#### Node ACTOR ####
+####################
+?actor			?actorLabel			dateOfBirth					?retrieved			?importedFrom		?NodePerson
+wd:Q296630		Jason Robards		1922-07-26T00:00:00Z							wd:Q328				CREATE (Q296630:Person {name:"Jason Robards", born: 26/7/1922})
+wd:Q296630		Jason Robards		1922-07-26T00:00:00Z							wd:Q48952			CREATE (Q296630:Person {name:"Jason Robards", born: 26/7/1922})
+	
+wd:Q21155089	Aaron Burns			1985-01-28T00:00:00Z												CREATE (Q21155089:Person {name:"Aaron Burns", born: 28/1/1985})
+	
+wd:Q54218		Marty Wright		1964-07-15T00:00:00Z		 					wd:Q328				CREATE (Q54218:Person {name:"Marty Wright", born: 15/7/1964})
+wd:Q54218		Marty Wright		1964-10-31T00:00:00Z												CREATE (Q54218:Person {name:"Marty Wright", born: 31/10/1964})
+	
+wd:Q222071		Courtney Love		1964-07-09T00:00:00Z		 					wd:Q328				CREATE (Q222071:Person {name:"Courtney Love", born: 9/7/1964})
+wd:Q222071		Courtney Love		1965-07-09T00:00:00Z	2014-04-27T00:00:00Z						CREATE (Q222071:Person {name:"Courtney Love", born: 9/7/1965})
+
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+SELECT	
+		DISTINCT
+		(concat('CREATE ('
+		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
+		#,REPLACE(?actorLabel, ' ', '')
+		,':Person {id:"'
+		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
+		,'", name:"'
+		,?actorLabel
+		,'", born: '
+		,str(day(?dateOfBirth)), '/', str(month(?dateOfBirth)), '/', str(year(?dateOfBirth))
+		,'})') as ?NodePerson)
+ WHERE								
+{								
+		?film			wdt:P31			wd:Q11424 .
+		?film			rdfs:label		?filmLabel .	
+		# wd:Q43416 -> Keanu Reeves						
+		?film			wdt:P161		wd:Q43416 .
+		?film 			wdt:P161 		?actor .	
+		?actor 			rdfs:label 		?actorLabel .
+	#OPTIONAL {
+		?actor			wdt:P569		?dateOfBirth .
+	#}
+	OPTIONAL {
+		?actor 				p:P569							?propdateOfBirth .
+		?propdateOfBirth	ps:P569							?dateOfBirth .
+		?propdateOfBirth	prov:wasDerivedFrom/pr:P813		?retrieved .
+	}
+	OPTIONAL {
+		?actor 				p:P569							?propdateOfBirth .
+		?propdateOfBirth	ps:P569							?dateOfBirth .
+		?propdateOfBirth	prov:wasDerivedFrom/pr:P143		?importedFrom .      	
+	}
+		FILTER (lang(?actorLabel) = 'en') .						
+  		#FILTER (lang(?filmLabel) = 'en') .						
+		#FILTER (str(?filmLabel) = "Bram Stoker's Dracula") .
+  		#FILTER (str(?filmLabel) = "The Matrix") .
+		#FILTER(str(?actorLabel) = "Courtney Love") .
+  		#FILTER(str(?actorLabel) = "Marty Wright") .
+  		#FILTER(str(?actorLabel) = "Aaron Burns") .
+  		#FILTER(str(?actorLabel) = "Jason Robards") .
+		#FILTER (!BOUND(?retrieved)) .
+  		#FILTER (BOUND(?importedFrom)) .
+  		#FILTER (IF(!BOUND(?retrieved), IF(BOUND(?importedFrom), true, true), IF(BOUND(?importedFom), true, false)))
+}
+ORDER BY ?actorLabel
+
+#######################
+#### Node DIRECTOR ####
+#######################
+SELECT 
+		DISTINCT
+		(concat('CREATE ('
+		,REPLACE(str(?director), 'http://www.wikidata.org/entity/', '')
+		,':Person {id:"'
+		,REPLACE(str(?director), 'http://www.wikidata.org/entity/', '')
+		,'", name:"'
+		,?directorLabel
+		,'", born: '
+        ,str(day(?dateOfBirth)), '/', str(month(?dateOfBirth)), '/', str(year(?dateOfBirth))
+		,'})') as ?NodePerson)
+ WHERE 
+{
+		# Film
+		?film				wdt:P31 			wd:Q11424 .
+		?film				rdfs:label 			?filmLabel .
+		# Actor
+		# wd:Q43416 -> Keanu Reeves
+		?film				wdt:P161			wd:Q43416 .
+		wd:Q43416			rdfs:label			?actorLabel .
+  		?film 				wdt:P57				?director .
+  		?director			rdfs:label			?directorLabel .
+  		?director			wdt:P569			?dateOfBirth
+		FILTER (lang(?filmLabel) = "en") .
+  		FILTER (lang(?directorLabel) = "en") .
+}
+ORDER BY ?directorLabel
+
+##################################
+#### Relation DIRECTOR - FILM ####
+##################################
+SELECT								
+		?DirectorFilm
+ WHERE								
+{								
+  		?film			wdt:P31			wd:Q11424 .
+		?film			rdfs:label		?filmLabel .
+		?film			wdt:P161		wd:Q43416 .
+  		?film 			wdt:P57 		?director .
+  		?director		rdfs:label 		?directorLabel .	
+			
+  		FILTER (lang(?directorLabel) = 'en') .
+  		FILTER (lang(?filmLabel) = 'en') .
+  		#FILTER (str(?filmLabel) = "Bram Stoker's Dracula") .
+		BIND(concat("(", replace(str(?director), "http://www.wikidata.org/entity/", ""), ")-[:DIRECTED]->(", replace(str(?film), "http://www.wikidata.org/entity/", ""), "),") AS ?DirectorFilm) .
+}
+ORDER BY ?filmLabel ?directorLabel
+
+################################################################
+#### Insert Occupation property into Person Node (DIRECTOR) ####
+################################################################
+SELECT
+        (concat('MATCH ('
+		,'p:Person {id:"'
+		,REPLACE(str(?director), 'http://www.wikidata.org/entity/', '')
+		,'"}) SET '
+		,'p.occupation = '
+		,concat('["', group_concat(?occupationLabel; separator='","'),'"]')
+		,' RETURN p') as ?InsertOccupationIntoNodePerson)
+		#,' RETURN p;') as ?InsertOccupationIntoNodePerson)					#Para una línea
+ WHERE
+{
+        SELECT
+				DISTINCT
+                ?director ?directorLabel ?dateOfBirth ?occupationLabel
+         WHERE 
+        {
+                # Film
+                ?film				wdt:P31 			wd:Q11424 .
+                ?film				rdfs:label 			?filmLabel .
+                # Actor
+                # wd:Q43416 -> Keanu Reeves
+                ?film				wdt:P161			wd:Q43416 .
+                wd:Q43416			rdfs:label			?actorLabel .
+                ?film 				wdt:P57				?director .
+                ?director			rdfs:label			?directorLabel .
+                ?director			wdt:P569			?dateOfBirth .
+			optional {
+          		?director			wdt:P106			?occupation .
+                ?occupation			rdfs:label			?occupationLabel .
+                FILTER (lang(?occupationLabel) = "en") .
+			}
+          		FILTER (lang(?filmLabel) = "en") .
+                FILTER (lang(?directorLabel) = "en") .
+        }
+        #GROUP BY ?director ?directorLabel ?dateOfBirth ?occupationLabel
+}
+GROUP BY ?director ?directorLabel ?dateOfBirth
+ORDER BY ?directorLabel
+
+#############################################################
+#### Insert Occupation property into Person Node (ACTOR) ####
+#############################################################
+SELECT
+        (concat('MATCH ('
+		,'p:Person {id:"'
+		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
+		,'"}) SET '
+		,'p.occupation = '
+		,concat('["', group_concat(?occupationLabel; separator='","'),'"]')
+		,' RETURN p') as ?InsertOccupationIntoNodePerson)
+ WHERE
+{
+        SELECT
+                ?actor ?actorLabel ?dateOfBirth ?occupationLabel
+         WHERE 
+        {
+                # Film
+                ?film			wdt:P31 			wd:Q11424 .
+                ?film			rdfs:label 			?filmLabel .
+                # Actor
+                # wd:Q43416 -> Keanu Reeves
+				?film			wdt:P161			wd:Q43416 .
+				?film 			wdt:P161 			?actor .
+				?actor 			rdfs:label 			?actorLabel .
+                ?actor			wdt:P106			?occupation .
+                ?occupation		rdfs:label			?occupationLabel .
+			OPTIONAL {
+				?actor			wdt:P569			?dateOfBirth .
+			}
+			OPTIONAL {
+				?actor 				p:P569							?propdateOfBirth .
+				?propdateOfBirth	ps:P569							?dateOfBirth .
+				?propdateOfBirth	prov:wasDerivedFrom/pr:P813		?retrieved .
+			}
+			OPTIONAL {
+				?actor 				p:P569							?propdateOfBirth .
+				?propdateOfBirth	ps:P569							?dateOfBirth .
+				?propdateOfBirth	prov:wasDerivedFrom/pr:P143		?importedFrom .
+			}
+				FILTER (lang(?actorLabel) = 'en') .
+                FILTER (lang(?occupationLabel) = "en") .
+        }
+        GROUP BY ?actor ?actorLabel ?dateOfBirth ?occupationLabel
+}
+GROUP BY ?actor ?actorLabel ?dateOfBirth
+ORDER BY ?actorLabel

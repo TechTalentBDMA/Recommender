@@ -1,0 +1,22 @@
+SELECT
+		DISTINCT
+		?performer ?perfomerLabel ?song ?songLabel
+		(	concat('('
+		,REPLACE(str(?perfomer), "http://www.wikidata.org/entity/", "")
+		,')-[:PLAYS]->('
+		,REPLACE(str(?song), "http://www.wikidata.org/entity/", "")
+		,'),') AS ?PerfomerSong)
+ WHERE
+{
+		?song			wdt:P31			wd:Q7366 .
+  		?song			rdfs:label		?songLabel .
+		?song			wdt:P175		?performer .
+  		?performer		rdfs:label		?performerLabel .
+
+  		FILTER(lang(?songLabel)="en") .
+  		FILTER(lang(?performerLabel)="en") .
+  		#FILTER(str(?performerLabel)="David Bowie") .
+  		#FILTER(str(?performerLabel)="Coldplay") .
+}
+#GROUP BY ?performer ?perfomerLabel ?song ?songLabel
+ORDER BY ?songLabel

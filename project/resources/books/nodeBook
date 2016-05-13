@@ -1,0 +1,35 @@
+SELECT
+		?titleLabel
+		(concat('CREATE ('
+		,REPLACE(str(?book), "http://www.wikidata.org/entity/", "")
+		,':Book {'
+		,'id:"'
+		,REPLACE(str(?book), "http://www.wikidata.org/entity/", "")
+		,'", name:"'
+		,?titleLabel
+		,'", genre:'
+		,(concat('["', group_concat(?genreLabel; separator='","'),'"]'))
+		,', released:"'
+       	,?released
+       	,'"})') AS ?NodeBook)
+ WHERE
+ {
+		?book			wdt:P50			?author .
+		?author			rdfs:label		?authorLabel .
+   		?book			rdfs:label		?titleLabel .
+		?book			wdt:P136		?genre .
+   		?genre			rdfs:label		?genreLabel .
+   		?book			wdt:P577		?publicationDate .
+   		
+		FILTER(lang(?authorLabel) = "en") .
+   		FILTER(lang(?titleLabel) = "en") .
+   		FILTER(lang(?genreLabel) = "en") .
+   		#FILTER(str(?authorLabel) = "Paulo Coelho") .
+   		#FILTER(str(?titleLabel) = "The Alchemist") .
+   		
+   		BIND(str(year(?publicationDate)) AS ?released)
+}
+GROUP BY
+		?book ?titleLabel ?released
+ORDER BY
+		?titleLabel
