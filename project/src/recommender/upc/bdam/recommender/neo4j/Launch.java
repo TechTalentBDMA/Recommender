@@ -15,9 +15,5 @@ public class Launch {
 		GraphDatabaseService graph = null;
 		graph = new GraphDatabaseFactory().newEmbeddedDatabase(db);
 	}
-
-	public static void main(String[] args) {
-		generate(Integer.parseInt(args[0]));
-	}
-
+	
 }

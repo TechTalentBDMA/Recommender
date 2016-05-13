@@ -1,4 +1,4 @@
-package upc.bdam.recommender.connection.http;
+package upc.bdam.recommender.neo4j.books;
 
 public class TittleLabel {
 

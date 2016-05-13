@@ -1,26 +1,23 @@
 SELECT	
-		DISTINCT
-		(concat('CREATE ('
-		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
-		#,REPLACE(?actorLabel, ' ', '')
-		,':Person {id:"'
-		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
-		,'", name:"'
-		,?actorLabel
-		,'", born: '
-		,str(day(?dateOfBirth)), '/', str(month(?dateOfBirth)), '/', str(year(?dateOfBirth))
-		,'})') as ?NodePerson)
+?actorLabel ?actor ?dateOfBirth
+#		DISTINCT
+#		(concat('CREATE ('
+#		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
+#		,':Person {id:"'
+#		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
+#		,'", name:"'
+#		,?actorLabel
+#		,'", born: '
+#		,str(day(?dateOfBirth)), '/', str(month(?dateOfBirth)), '/', str(year(?dateOfBirth))
+#		,'})') as ?NodePerson)
  WHERE								
 {								
 		?film			wdt:P31			wd:Q11424 .
 		?film			rdfs:label		?filmLabel .	
-		# wd:Q43416 -> Keanu Reeves						
 		?film			wdt:P161		wd:Q43416 .
 		?film 			wdt:P161 		?actor .	
 		?actor 			rdfs:label 		?actorLabel .
-	#OPTIONAL {
 		?actor			wdt:P569		?dateOfBirth .
-	#}
 	OPTIONAL {
 		?actor 				p:P569							?propdateOfBirth .
 		?propdateOfBirth	ps:P569							?dateOfBirth .
@@ -32,15 +29,5 @@ SELECT
 		?propdateOfBirth	prov:wasDerivedFrom/pr:P143		?importedFrom .      	
 	}
 		FILTER (lang(?actorLabel) = 'en') .						
-  		#FILTER (lang(?filmLabel) = 'en') .						
-		#FILTER (str(?filmLabel) = "Bram Stoker's Dracula") .
-  		#FILTER (str(?filmLabel) = "The Matrix") .
-		#FILTER(str(?actorLabel) = "Courtney Love") .
-  		#FILTER(str(?actorLabel) = "Marty Wright") .
-  		#FILTER(str(?actorLabel) = "Aaron Burns") .
-  		#FILTER(str(?actorLabel) = "Jason Robards") .
-		#FILTER (!BOUND(?retrieved)) .
-  		#FILTER (BOUND(?importedFrom)) .
-  		#FILTER (IF(!BOUND(?retrieved), IF(BOUND(?importedFrom), true, true), IF(BOUND(?importedFom), true, false)))
 }
 ORDER BY ?actorLabel

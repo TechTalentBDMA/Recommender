@@ -1,5 +1,8 @@
 package upc.bdam.recommender.connection.http;
 
+import upc.bdam.recommender.neo4j.books.NodeBook;
+import upc.bdam.recommender.neo4j.books.TittleLabel;
+
 public class BookResult {
 	
 	public TittleLabel titleLabel;
