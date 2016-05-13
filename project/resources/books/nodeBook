@@ -11,7 +11,7 @@ SELECT
 		,(concat('["', group_concat(?genreLabel; separator='","'),'"]'))
 		,', released:"'
        	,?released
-       	,'"})') AS ?NodeBook)
+       	,'"})') AS ?nodeBook)
  WHERE
  {
 		?book			wdt:P50			?author .

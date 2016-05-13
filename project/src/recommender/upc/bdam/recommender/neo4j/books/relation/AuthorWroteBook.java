@@ -1,8 +1,8 @@
-package upc.bdam.recommender.neo4j.books;
+package upc.bdam.recommender.neo4j.books.relation;
 
-public class NodeBook {
+public class AuthorWroteBook {
 	
-	private String value;
+	String value;
 
 	public String getValue() {
 		return value;
@@ -11,4 +11,6 @@ public class NodeBook {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	
+
 }

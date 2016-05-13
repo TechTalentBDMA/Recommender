@@ -1,6 +1,4 @@
-package upc.bdam.recommender.neo4j.books;
-
-import upc.bdam.recommender.connection.http.BookResult;
+package upc.bdam.recommender.neo4j.books.book.node;
 
 public class Result {
 	

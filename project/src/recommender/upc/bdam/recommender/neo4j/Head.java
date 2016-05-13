@@ -1,4 +1,4 @@
-package upc.bdam.recommender.neo4j.books;
+package upc.bdam.recommender.neo4j;
 
 public class Head {
 	

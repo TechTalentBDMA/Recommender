@@ -12,8 +12,10 @@ import java.net.URLEncoder;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import upc.bdam.recommender.neo4j.books.RdfResult;
-import upc.bdam.recommender.neo4j.books.Result;
+import upc.bdam.recommender.neo4j.IBinding;
+import upc.bdam.recommender.neo4j.RdfResult;
+import upc.bdam.recommender.neo4j.books.relation.Result;
+
 
 public class HttpURLConnector {
 
@@ -45,9 +47,10 @@ public void write(){
 
 		//JSON from String to Object
 		RdfResult user = mapper.readValue(resultado.toString(), RdfResult.class);
-		Result nodeBooks=user.getResult();
-		BookResult[] results=nodeBooks.getBindings();
-	
+		Result nodeBooks=(Result)user.getResult();
+		IBinding[] results=nodeBooks.getBindings();
+		System.out.print("numero de resultados: "+results.length);
+		System.out.println("==");
 		
 	}catch (IOException ioex){
 		ioex.printStackTrace();
@@ -63,8 +66,7 @@ public void write(){
 		BufferedReader br=null;
 		String everything=new String();
 		try {
-//			br = new BufferedReader(new FileReader("C:\\Users\\sorel\\git\\upc\\Recommender\\project\\resources\\books\\nodeAuthor"));
-			br = new BufferedReader(new FileReader("C:\\Users\\sorel\\git\\upc\\Recommender\\project\\resources\\films\\actor"));
+			br = new BufferedReader(new FileReader("C:\\Users\\sorel\\git\\upc\\Recommender\\project\\resources\\books\\relation"));
 		    StringBuilder sb = new StringBuilder();
 		    String line = br.readLine();
 

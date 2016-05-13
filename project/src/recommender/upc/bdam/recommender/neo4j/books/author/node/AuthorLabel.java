@@ -1,6 +1,6 @@
-package upc.bdam.recommender.neo4j.books;
+package upc.bdam.recommender.neo4j.books.author.node;
 
-public class TittleLabel {
+public class AuthorLabel {
 
 	private String value;
 
