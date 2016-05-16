@@ -1,0 +1,22 @@
+SELECT
+		(REPLACE(str(?author), "http://www.wikidata.org/entity/", "")as ?author) 
+		(REPLACE(str(?book), "http://www.wikidata.org/entity/", "")as ?book)
+		?authorLabel ?titleLabel
+ WHERE
+ {
+   		# book				->	wd:Q571
+   		# author			->	wdt:P50
+   		# genre				-> 	wdt:P136
+   		# publicationDate	->	wdt:P577
+   		?book			wdt:P31			wd:Q571 .
+		?book			wdt:P50			?author .
+		?author			rdfs:label		?authorLabel .
+   		?book			rdfs:label		?titleLabel .
+   		
+		FILTER(lang(?authorLabel) = "en") .
+   		FILTER(lang(?titleLabel) = "en") .
+}
+GROUP BY
+		?author ?book ?authorLabel ?titleLabel
+ORDER BY
+		?authorLabel ?titleLabel

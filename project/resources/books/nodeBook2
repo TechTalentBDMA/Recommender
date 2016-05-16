@@ -1,18 +1,6 @@
-SELECT
-		?titleLabel
-		(concat('CREATE ('
-		,REPLACE(str(?book), "http://www.wikidata.org/entity/", "")
-		,':Book {'
-		,'id:"'
-		,REPLACE(str(?book), "http://www.wikidata.org/entity/", "")
-		,'", name:"'
-		,?titleLabel
-		,'", genre:'
-		,(concat('["', group_concat(?genreLabel; separator='","'),'"]'))
-		,', released:"'
-      	,?released
-       	,'"})') AS ?nodeBook)
-       	
+SELECT	    (REPLACE(str(?book), "http://www.wikidata.org/entity/", "")as ?book)
+	#?book 
+	?titleLabel ?genreLabel ?released       	
  WHERE
  {
  		#"http://www.wikidata.org/entity/Q7834141"			wd:Q571		?book .
@@ -32,6 +20,6 @@ SELECT
    		BIND(str(year(?publicationDate)) AS ?released)
 }
 GROUP BY
-		?book ?titleLabel ?released
+		?book ?titleLabel ?released ?genreLabel
 ORDER BY
 		?titleLabel

@@ -1,12 +1,11 @@
 package upc.bdam.recommender.neo4j.books.relation;
 
-import upc.bdam.recommender.neo4j.IBinding;
 import upc.bdam.recommender.neo4j.books.author.node.AuthorLabel;
 import upc.bdam.recommender.neo4j.books.author.node.NodePerson;
 import upc.bdam.recommender.neo4j.books.book.node.NodeBook;
 import upc.bdam.recommender.neo4j.books.book.node.TitleLabel;
 
-public class RelationResult implements IBinding{
+public class RelationResult {
 	
 	public TitleLabel titleLabel;
 	public NodeBook book;
