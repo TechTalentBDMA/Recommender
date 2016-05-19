@@ -1,0 +1,23 @@
+SELECT
+		DISTINCT (REPLACE(str(?book), "http://www.wikidata.org/entity/", "") as ?id)
+		?title
+		?released
+ WHERE
+ {
+		?book			wdt:P50			?author .
+		?author			rdfs:label		?authorLabel .
+   		?book			rdfs:label		?title .
+		?book			wdt:P136		?genre .
+   		?genre			rdfs:label		?genreLabel .
+   		?book			wdt:P577		?publicationDate .
+   		
+		FILTER(lang(?authorLabel) = "en") .
+   		FILTER(lang(?title) = "en") .
+   		FILTER(lang(?genreLabel) = "en") .
+ 		
+   		BIND(str(year(?publicationDate)) AS ?released)
+}
+GROUP BY
+		?book ?title ?released
+ORDER BY
+		?title

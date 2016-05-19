@@ -1,0 +1,17 @@
+SELECT
+		DISTINCT
+		(REPLACE(str(?performer), "http://www.wikidata.org/entity/", "") as ?authorId)
+		(REPLACE(str(?song), "http://www.wikidata.org/entity/", "") as ?artWorkId)
+		(?performerLabel as ?authorName)
+		(?songLabel as ?artWorkTitle)
+ WHERE
+{
+		?song			wdt:P31			wd:Q7366 .
+  		?song			rdfs:label		?songLabel .
+		?song			wdt:P175		?performer .
+  		?performer		rdfs:label		?performerLabel .
+
+  		FILTER(lang(?songLabel)="en") .
+  		FILTER(lang(?performerLabel)="en") .
+}
+ORDER BY ?songLabel

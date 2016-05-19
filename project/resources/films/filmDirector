@@ -1,5 +1,9 @@
-SELECT								
-		?DirectorFilm
+SELECT		
+		(replace(str(?director), "http://www.wikidata.org/entity/", "") as ?authorId)
+		(replace(str(?film), "http://www.wikidata.org/entity/", "") as ?artWorkId)
+		(?filmLabel as ?artWorkTitle)
+		(?directorLabel as ?authorName)
+		#?DirectorFilm
  WHERE								
 {								
   		?film			wdt:P31			wd:Q11424 .
@@ -10,7 +14,6 @@ SELECT
 			
   		FILTER (lang(?directorLabel) = 'en') .
   		FILTER (lang(?filmLabel) = 'en') .
-  		#FILTER (str(?filmLabel) = "Bram Stoker's Dracula") .
 		BIND(concat("(", replace(str(?director), "http://www.wikidata.org/entity/", ""), ")-[:DIRECTED]->(", replace(str(?film), "http://www.wikidata.org/entity/", ""), "),") AS ?DirectorFilm) .
 }
 ORDER BY ?filmLabel ?directorLabel

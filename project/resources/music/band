@@ -1,0 +1,19 @@
+SELECT
+		(REPLACE(str(?band), "http://www.wikidata.org/entity/", "") as ?id)
+		(?bandLabel as ?name)
+		(year(?inception) as ?born)
+ WHERE
+{
+		?band			wdt:P31			wd:Q215380 .
+		?band			rdfs:label		?bandLabel .
+  		?band			wdt:P136		?genre .
+		?genre			rdfs:label		?genreLabel .
+  		?band			wdt:P571		?inception .
+                        
+		FILTER(lang(?bandLabel)="en") .
+  		FILTER(lang(?genreLabel)="en") .
+}
+GROUP BY
+		?band ?bandLabel ?inception
+ORDER BY
+		?bandLabel

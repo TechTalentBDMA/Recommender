@@ -1,0 +1,43 @@
+SELECT
+        (REPLACE(str(?author), "http://www.wikidata.org/entity/", "") as ?id)
+        (?authorLabel as ?name)
+        ?born
+ WHERE
+{
+		SELECT
+				?author
+				?authorLabel
+				(concat(str(day(?dateOfBirth)), "/", str(month(?dateOfBirth)), "/", str(year(?dateOfBirth))) as ?born)
+				?occupation
+              	?occupationLabel
+				(count(1) as ?nAuthor)
+         WHERE
+        {
+				?book			wdt:P31			wd:Q571 .
+				?book			wdt:P50			?author .
+				?author			rdfs:label		?authorLabel .
+			OPTIONAL {
+  				?author			wdt:P569		?dateOfBirth .
+			}
+			OPTIONAL {
+                ?author			wdt:P106		?occupation .
+                ?occupation		rdfs:label		?occupationLabel .
+  				FILTER (lang(?occupationLabel) = 'en') .
+			}
+
+                FILTER(lang(?authorLabel) = 'en') .
+          		FILTER(lang(?occupationLabel) = 'en') .
+        }
+		GROUP BY
+				?author
+				?authorLabel
+				?dateOfBirth
+				?occupation
+                ?occupationLabel
+}
+GROUP BY
+        ?author
+        ?authorLabel
+        ?born
+ORDER BY
+        ?authorLabel

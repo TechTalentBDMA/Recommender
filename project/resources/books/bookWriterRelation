@@ -1,0 +1,23 @@
+SELECT
+		(REPLACE(str(?author), "http://www.wikidata.org/entity/", "")as ?authorId) 
+		(REPLACE(str(?actor), "http://www.wikidata.org/entity/", "")as ?artWorkId)
+		?authorName 
+		?artWorkTitle
+ WHERE
+ {
+   		#?actor				->	wd:Q571
+   		# author			->	wdt:P50
+   		# genre				-> 	wdt:P136
+   		# publicationDate	->	wdt:P577
+   		?actor			wdt:P31			wd:Q571 .
+		?actor			wdt:P50			?author .
+		?author			rdfs:label		?authorName .
+   		?actor			rdfs:label		?artWorkTitle .
+   		
+		FILTER(lang(?authorName) = "en") .
+   		FILTER(lang(?artWorkTitle) = "en") .
+}
+GROUP BY
+		?author ?actor ?authorName ?artWorkTitle
+ORDER BY
+		?authorName ?artWorkTitle

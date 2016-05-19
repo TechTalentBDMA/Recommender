@@ -1,15 +1,8 @@
 SELECT	
-?actorLabel ?actor ?dateOfBirth
-#		DISTINCT
-#		(concat('CREATE ('
-#		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
-#		,':Person {id:"'
-#		,REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '')
-#		,'", name:"'
-#		,?actorLabel
-#		,'", born: '
-#		,str(day(?dateOfBirth)), '/', str(month(?dateOfBirth)), '/', str(year(?dateOfBirth))
-#		,'})') as ?NodePerson)
+		DISTINCT
+		(REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '') as ?id)
+		(?actorLabel as ?name)
+		(concat(str(day(?dateOfBirth)), "/", str(month(?dateOfBirth)), "/", str(year(?dateOfBirth))) as ?born)
  WHERE								
 {								
 		?film			wdt:P31			wd:Q11424 .

@@ -1,0 +1,37 @@
+SELECT
+		(REPLACE(str(?memberOf), "http://www.wikidata.org/entity/", "")as ?id)
+		(?memberOfLabel as ?name)
+		(concat(str(day(?dateOfBirth)), "/", str(month(?dateOfBirth)), "/", str(year(?dateOfBirth))) as ?born)	
+ WHERE
+{
+		{SELECT
+				?band
+         WHERE
+        {
+                ?band			wdt:P31			wd:Q215380 .
+                ?band			rdfs:label		?bandLabel .
+                ?band			wdt:P136		?genre .
+                ?genre			rdfs:label		?genreLabel .
+
+                FILTER(lang(?bandLabel) = 'en') .
+                FILTER(lang(?genreLabel) = 'en') .
+        }
+		GROUP BY
+				?band
+		}
+		?band			wdt:P31			wd:Q215380 .
+		?band			rdfs:label		?bandLabel .
+  		?band			wdt:P527		?memberOf .
+		?memberOf		rdfs:label		?memberOfLabel .
+  		?memberOf		wdt:P569		?dateOfBirth .
+  		?memberOf		wdt:P106		?occupation .
+		?occupation		rdfs:label		?occupationLabel .
+
+  		FILTER (lang(?bandLabel) = 'en') .
+  		FILTER (lang(?memberOfLabel) = 'en') .
+  		FILTER (lang(?occupationLabel) = 'en') .
+}
+GROUP BY
+		?memberOf ?memberOfLabel ?dateOfBirth
+ORDER BY
+		?memberOfLabel

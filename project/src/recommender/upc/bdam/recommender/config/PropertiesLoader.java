@@ -6,8 +6,6 @@ import java.util.Properties;
 
 public class PropertiesLoader {
 	
-	public static final String PROPERTIES_LOADER_NEO4J_LOCATION= "neo4JDB";
-
 	private static PropertiesLoader instance = null;
 	Properties prop = new Properties();
 
@@ -26,7 +24,7 @@ public class PropertiesLoader {
 
 	private void init() {
 
-		String fileName = "localAgent.properties";
+		String fileName = "recomender.properties";
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
 		try {
 			if (inputStream != null)

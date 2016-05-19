@@ -1,31 +1,7 @@
 SELECT
-		?song ?songLabel ?released
-		(if(?released = '3000',
-            concat('CREATE ('
-            ,REPLACE(str(?song), "http://www.wikidata.org/entity/", "")
-            ,':Song {'
-            ,'id:"'
-            ,REPLACE(str(?song), "http://www.wikidata.org/entity/", "")
-            ,'", name:"'
-            ,?songLabel
-            ,'", genre:'
-            ,(concat('["', group_concat(?genreSongLabel; separator='","'),'"]'))
-            ,'})')
-		,
-            concat('CREATE ('
-            ,REPLACE(str(?song), "http://www.wikidata.org/entity/", "")
-            ,':Song {'
-            ,'id:"'
-            ,REPLACE(str(?song), "http://www.wikidata.org/entity/", "")
-            ,'", name:"'
-            ,?songLabel
-            ,'", genre:'
-            ,(concat('["', group_concat(?genreSongLabel; separator='","'),'"]'))
-            ,', released:"'
-            ,?released
-            ,'"})')
-		) as ?NodeSong)
-		#?song ?songLabel ?genreSongLabel ?released
+		(REPLACE(str(?song), "http://www.wikidata.org/entity/", "") as ?id)
+		(?songLabel as ?title)
+		?released
  WHERE
 {
 		SELECT
@@ -33,14 +9,11 @@ SELECT
 				?song
                 ?songLabel
                 ?genreSongLabel
-                #(if(!BOUND(?publicationDate), '3000-01-01', concat(str(year(?publicationDate)), "-", str(month(?publicationDate)), "-", str(day(?publicationDate)))) AS ?released)
                 (if(!BOUND(?publicationDate), '3000', str(year(?publicationDate))) AS ?released)
          WHERE
         {
                 ?song			wdt:P31			wd:Q7366 .
                 ?song			rdfs:label		?songLabel .
-                #?song			wdt:P175		?performer .
-                #?performer		rdfs:label		?performerLabel .
             OPTIONAL {
                 ?song			wdt:P136		?genreSong .
                 ?genreSong		rdfs:label		?genreSongLabel .
@@ -52,11 +25,8 @@ SELECT
 
                 FILTER(lang(?songLabel)="en") .
           		FILTER(lang(?genreSongLabel)="en") .
-                #FILTER(str(?performerLabel)="David Bowie") .
-                #FILTER(str(?performerLabel)="Coldplay") .
-                #FILTER(str(?performerLabel)="LMFAO") .
+
         }
-		#GROUP BY ?song ?songLabel ?genreSongLabel ?publicationDate
 		ORDER BY ?songLabel
 }
 GROUP BY ?song ?songLabel ?released
