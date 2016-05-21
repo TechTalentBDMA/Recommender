@@ -5,10 +5,10 @@ import upc.bdam.recommender.ontology.json.IBinding;
 
 public class ArtWork implements IBinding {
 
-	public GenericResult id=new GenericResult();
-	public GenericResult title=new GenericResult();
-	public GenericResult genre=new GenericResult();
-	public GenericResult released=new GenericResult();
+	public GenericResult id				=new GenericResult();
+	public GenericResult title				=new GenericResult();
+	public GenericResult genre		=	new GenericResult();
+	public GenericResult released		=new GenericResult();
 
 	public GenericResult getId() {
 		return id;

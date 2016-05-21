@@ -1,4 +1,4 @@
-package upc.bdam.recommender.neo4j.dao;
+package upc.bdam.recommender.graph.dao;
 
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
@@ -8,7 +8,7 @@ import upc.bdam.recommender.ontology.json.artwork.ArtWork;
 import upc.bdam.recommender.ontology.json.author.Author;
 import upc.bdam.recommender.ontology.json.relation.ArtWorkAuthorRelation;
 
-public class Neo4JDataAccessObject {
+public class GraphDataAccessObject {
 
 	public static final String PERSON_NODE_ID = "id";
 	public static final String PERSON_NODE_BORN = "born";
@@ -31,7 +31,7 @@ public class Neo4JDataAccessObject {
 		WriterWroteBook, MusicianMemberOfBand, DirectorDirectedFilm, BandPlayedSong, ActorActedFilm
 	}
 
-	Neo4JDataSource dbDataAccess = new Neo4JDataSource();
+	GraphDataSource dbDataAccess = new GraphDataSource();
 
 	public void insertPersonNode(IBinding[] values, PersonNodeType type) {
 		dbDataAccess.initTransaction();

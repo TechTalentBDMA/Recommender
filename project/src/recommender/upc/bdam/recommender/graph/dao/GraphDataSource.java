@@ -1,4 +1,4 @@
-package upc.bdam.recommender.neo4j.dao;
+package upc.bdam.recommender.graph.dao;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,14 +15,14 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.kernel.impl.core.NodeProxy;
 
 import upc.bdam.recommender.config.PropertiesLoader;
-import upc.bdam.recommender.neo4j.dao.Neo4JDataAccessObject.ArtWorkNodeType;
-import upc.bdam.recommender.neo4j.dao.Neo4JDataAccessObject.PersonNodeType;
-import upc.bdam.recommender.neo4j.dao.Neo4JDataAccessObject.RelationType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.ArtWorkNodeType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonNodeType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.RelationType;
 import upc.bdam.recommender.ontology.json.artwork.ArtWork;
 import upc.bdam.recommender.ontology.json.author.Author;
 import upc.bdam.recommender.ontology.json.relation.ArtWorkAuthorRelation;
 
-public class Neo4JDataSource {
+public class GraphDataSource {
 
 	static final String NEO4J_DDBB = "neo4JDB";
 
@@ -30,7 +30,7 @@ public class Neo4JDataSource {
 	GraphDatabaseService graph = null;
 	Transaction tx = null;
 
-	public Neo4JDataSource() {
+	public GraphDataSource() {
 		init();
 	}
 
@@ -77,19 +77,19 @@ public class Neo4JDataSource {
 
 		Node node = graph.createNode(type);
 
-		node.setProperty(Neo4JDataAccessObject.PERSON_NODE_ID, author.getId().getValue());
-		node.setProperty(Neo4JDataAccessObject.PERSON_NODE_BORN, author.getBorn().getValue());
-		node.setProperty(Neo4JDataAccessObject.PERSON_NODE_NAME, author.getName().getValue());
+		node.setProperty(GraphDataAccessObject.PERSON_NODE_ID, author.getId().getValue());
+		node.setProperty(GraphDataAccessObject.PERSON_NODE_BORN, author.getBorn().getValue());
+		node.setProperty(GraphDataAccessObject.PERSON_NODE_NAME, author.getName().getValue());
 	}
 
 	public void insertArtWorkNode(ArtWork artWork, ArtWorkNodeType type) {
 
 		Node node = graph.createNode(type);
 
-		node.setProperty(Neo4JDataAccessObject.ARTWORK_NODE_ID, artWork.getId().getValue());
-		node.setProperty(Neo4JDataAccessObject.ARTWORK_NODE_RELEASED, artWork.getReleased().getValue());
-		node.setProperty(Neo4JDataAccessObject.ARTWORK_NODE_TITLE, artWork.getTitle().getValue());
-		node.setProperty(Neo4JDataAccessObject.ARTWORK_NODE_GENRE, artWork.getGenre().getValue());
+		node.setProperty(GraphDataAccessObject.ARTWORK_NODE_ID, artWork.getId().getValue());
+		node.setProperty(GraphDataAccessObject.ARTWORK_NODE_RELEASED, artWork.getReleased().getValue());
+		node.setProperty(GraphDataAccessObject.ARTWORK_NODE_TITLE, artWork.getTitle().getValue());
+		node.setProperty(GraphDataAccessObject.ARTWORK_NODE_GENRE, artWork.getGenre().getValue());
 	}
 
 	public void insertRelation(ArtWorkAuthorRelation relation, RelationType relationType, PersonNodeType personType, Label label ) {

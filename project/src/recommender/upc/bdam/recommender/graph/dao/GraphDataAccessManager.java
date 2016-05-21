@@ -1,13 +1,18 @@
-package upc.bdam.recommender.neo4j.dao;
+package upc.bdam.recommender.graph.dao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.neo4j.graphdb.Label;
 
-import upc.bdam.recommender.neo4j.dao.Neo4JDataAccessObject.ArtWorkNodeType;
-import upc.bdam.recommender.neo4j.dao.Neo4JDataAccessObject.PersonNodeType;
-import upc.bdam.recommender.neo4j.dao.Neo4JDataAccessObject.RelationType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.ArtWorkNodeType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonNodeType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.RelationType;
 import upc.bdam.recommender.ontology.json.IBinding;
 
-public class Neo4JDataAccessManager {
+public class GraphDataAccessManager {
+
+	private List<GraphDDBBObserver> observers = new ArrayList<GraphDDBBObserver>();
 
 	public static final byte GRAPH_WRITER_INSERT = 1;
 	public static final byte GRAPH_BOOK_INSERT = 2;
@@ -25,18 +30,18 @@ public class Neo4JDataAccessManager {
 	public static final byte GRAPH_BAND_MEMBER_RELATION_INSERT = 12;
 	public static final byte GRAPH_SONG_PERFORMER_RELATION_INSERT = 13;
 
-	private static Neo4JDataAccessManager instance = null;
-	private Neo4JDataAccessObject accessObject = new Neo4JDataAccessObject();
+	private static GraphDataAccessManager instance = null;
+	private GraphDataAccessObject accessObject = new GraphDataAccessObject();
 
-	private Neo4JDataAccessManager() {
+	private GraphDataAccessManager() {
 
 	}
 
-	public static final Neo4JDataAccessManager getInstance() {
+	public static final GraphDataAccessManager getInstance() {
 		if (instance != null)
 			return instance;
 		else {
-			instance = new Neo4JDataAccessManager();
+			instance = new GraphDataAccessManager();
 			return instance;
 		}
 	}
@@ -67,7 +72,7 @@ public class Neo4JDataAccessManager {
 			break;
 
 		case GRAPH_ACTOR_FILM_RELATION_INSERT:
-			insertRelation(values, RelationType.ActorActedFilm,PersonNodeType.Actor,ArtWorkNodeType.Film);
+			insertRelation(values, RelationType.ActorActedFilm, PersonNodeType.Actor, ArtWorkNodeType.Film);
 			break;
 
 		case GRAPH_DIRECTOR_FILM_RELATION_INSERT:
@@ -87,11 +92,11 @@ public class Neo4JDataAccessManager {
 			break;
 
 		case GRAPH_BAND_MEMBER_RELATION_INSERT:
-			insertRelation(values, RelationType.MusicianMemberOfBand, PersonNodeType.Musician, PersonNodeType.Band );
+			insertRelation(values, RelationType.MusicianMemberOfBand, PersonNodeType.Musician, PersonNodeType.Band);
 			break;
 
 		case GRAPH_SONG_PERFORMER_RELATION_INSERT:
-			insertRelation(values, RelationType.BandPlayedSong,PersonNodeType.Band, ArtWorkNodeType.Song);
+			insertRelation(values, RelationType.BandPlayedSong, PersonNodeType.Band, ArtWorkNodeType.Song);
 			break;
 
 		default:
@@ -109,11 +114,22 @@ public class Neo4JDataAccessManager {
 		accessObject.insertArtWorkNode(values, type);
 	}
 
-	private void insertRelation(IBinding[] values, RelationType relationType, PersonNodeType personType, ArtWorkNodeType artWorkType) {
+	private void insertRelation(IBinding[] values, RelationType relationType, PersonNodeType personType,
+			ArtWorkNodeType artWorkType) {
 		accessObject.insertRelation(values, relationType, personType, artWorkType);
 	}
-	
+
 	private void insertRelation(IBinding[] values, RelationType relationType, PersonNodeType personType, Label label) {
 		accessObject.insertRelation(values, relationType, personType, label);
+	}
+
+	public void attach(GraphDDBBObserver observer) {
+		observers.add(observer);
+	}
+
+	public void notifyAllObservers(IBinding[] values) {
+		for (GraphDDBBObserver observer : observers) {
+			observer.update(values);
+		}
 	}
 }
