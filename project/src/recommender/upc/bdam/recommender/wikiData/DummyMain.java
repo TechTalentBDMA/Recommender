@@ -1,5 +1,6 @@
 package upc.bdam.recommender.wikiData;
 
+import upc.bdam.recommender.documentDDBB.dao.DocumentDDBBGraphObserver;
 import upc.bdam.recommender.graph.dao.GraphDataAccessManager;
 import upc.bdam.recommender.ontology.json.IBinding;
 
@@ -11,9 +12,10 @@ public class DummyMain {
 		
 
 		try {
+			GraphDataAccessManager.getInstance().attach(new DocumentDDBBGraphObserver());
 			getBooks();
-			getFilms();
-			getSongs();
+		//	getFilms();
+		//s	getSongs();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

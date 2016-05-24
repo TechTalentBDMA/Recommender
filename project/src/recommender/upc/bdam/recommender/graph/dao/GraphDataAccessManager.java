@@ -107,11 +107,13 @@ public class GraphDataAccessManager {
 	private void insertPersonNode(IBinding[] values, PersonNodeType type) {
 
 		accessObject.insertPersonNode(values, type);
+		notifyAllObservers(values);
 
 	}
 
 	private void insertArtWorkNode(IBinding[] values, ArtWorkNodeType type) {
 		accessObject.insertArtWorkNode(values, type);
+		notifyAllObservers(values);
 	}
 
 	private void insertRelation(IBinding[] values, RelationType relationType, PersonNodeType personType,
@@ -129,7 +131,7 @@ public class GraphDataAccessManager {
 
 	public void notifyAllObservers(IBinding[] values) {
 		for (GraphDDBBObserver observer : observers) {
-			observer.update(values);
+			observer.insert(values);
 		}
 	}
 }
