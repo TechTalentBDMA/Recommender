@@ -10,12 +10,12 @@ public class DummyMain {
 
 	public static void main(String[] args) {
 		
-
 		try {
+			Runtime.getRuntime().exec("C:\\Program Files\\R\\R-3.2.5\\bin\\Rscript.exe C:\\dummy.R");
 			GraphDataAccessManager.getInstance().attach(new DocumentDDBBGraphObserver());
 			getBooks();
-		//	getFilms();
-		//s	getSongs();
+			getFilms();
+			getSongs();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
