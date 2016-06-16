@@ -1,27 +1,46 @@
 package upc.bdam.recommender.wikiData;
 
-import upc.bdam.recommender.documentDDBB.dao.DocumentDDBBGraphObserver;
+import upc.bdam.recommender.documentDDBB.dao.TextAnalyticsDataSource;
 import upc.bdam.recommender.graph.dao.GraphDataAccessManager;
+import upc.bdam.recommender.graphupdater.schema.TextAnalyticsGraphGuard;
 import upc.bdam.recommender.ontology.json.IBinding;
 
-public class DummyMain {
-	
-	
+/**
+ * Clase principal de ejecución del recomendador.
+ * 
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
+public class Recommender {	
 
 	public static void main(String[] args) {
 		
 		try {
-			Runtime.getRuntime().exec("C:\\Program Files\\R\\R-3.2.5\\bin\\Rscript.exe C:\\dummy.R");
-			GraphDataAccessManager.getInstance().attach(new DocumentDDBBGraphObserver());
-			getBooks();
-			getFilms();
-			getSongs();
+			Thread mongoGuard =new Thread(new TextAnalyticsGraphGuard());
+			mongoGuard.start();
+			TextAnalyticsDataSource dataSource=new TextAnalyticsDataSource();
+			dataSource.hayNuevosDatos(123456);
+//			Runtime.getRuntime().exec("C:\\Program Files\\R\\R-3.2.5\\bin\\Rscript.exe C:\\dummy.R");
+//			Runtime.getRuntime().exec("C:\\Program Files\\R\\R-3.2.5\\bin\\Rscript.exe C:\\TextMining\\CodigoR\\TADocsV05.R");
+//			GraphDataAccessManager.getInstance().attach(new DocumentDDBBGraphObserver());
+			//getBooks();
+			//getFilms();
+			//getSongs();
+			while (true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Obtienen los datos de libros de wikidata y los inserta en la BBDD de grafos.
+	 * @throws Exception
+	 */
 	private static void getBooks() throws Exception{
 		OntologyDataAccessObject dao=new OntologyDataAccessObject();
 		
@@ -37,6 +56,10 @@ public class DummyMain {
 		System.out.println(value.length);
 	}
 	
+	/**
+	 * Obtienen los datos de películas de wikidata y los inserta en la BBDD de grafos.
+	 * @throws Exception
+	 */
 	private static void getFilms() throws Exception{
 		OntologyDataAccessObject dao=new OntologyDataAccessObject();
 		IBinding[] value=dao.getActors();
@@ -55,6 +78,10 @@ public class DummyMain {
 		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_DIRECTOR_FILM_RELATION_INSERT, value);
 	}
 	
+	/**
+	 * Obtienen los datos de canciones de wikidata y los inserta en la BBDD de grafos.
+	 * @throws Exception
+	 */
 	private static void getSongs() throws Exception{
 		OntologyDataAccessObject dao=new OntologyDataAccessObject();
 		IBinding[] value=dao.getBand();

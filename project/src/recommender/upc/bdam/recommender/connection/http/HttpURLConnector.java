@@ -9,18 +9,32 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 
+/**
+ * Clase de acceso HTTP. Es utilizada para acceder a wikidata en busca de los datos de la carga inicial de la BBDD de 
+ * grafos, y para consultas posteriores de actualización de contenidos.
+ * 
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
 public class HttpURLConnector {
 
+	//variable en la que se almacena la conexión.
 	HttpsURLConnection connection;
 
-	
+	/**
+	 * Abre la conexión a una URL concreta
+	 * @param url
+	 */
 	public void openConnection(String url) {
 		URL uri;
 		try {
 			uri = new URL(url);
 			connection=(HttpsURLConnection)uri.openConnection();
 			connection.setDoOutput(true);
-		//	connection.connect();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -29,10 +43,11 @@ public class HttpURLConnector {
 
 	}
 	
-	public void setPropertie(String key, String value){
-		connection.setRequestProperty(key, value);
-	}
 
+	/**
+	 * Envía datos al endpoint de la conexión abiert
+	 * @param data
+	 */
 	public void sendData(String data){
 		try {
 			OutputStream out=connection.getOutputStream();
@@ -43,6 +58,10 @@ public class HttpURLConnector {
 		}
 	}
 	
+	/**
+	 * Recibe datos desde el endpoint
+	 * @return
+	 */
 	public String  receiveData(){
 		InputStream input;
 		StringBuffer resultado = new StringBuffer();

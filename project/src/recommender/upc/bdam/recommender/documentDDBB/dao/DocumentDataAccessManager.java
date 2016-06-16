@@ -1,20 +1,17 @@
 package upc.bdam.recommender.documentDDBB.dao;
 
-import upc.bdam.recommender.consumer.schema.SchemaAudioBean;
-import upc.bdam.recommender.consumer.schema.SchemaTextBean;
-import upc.bdam.recommender.consumer.schema.SchemaVideoBean;
-import upc.bdam.recommender.consumer.schema.SchemaWebBean;
 import upc.bdam.recommender.consumer.schema.TextAnalyticsSchema;
 import upc.bdam.recommender.ontology.json.IBinding;
 
 /**
- * Clase que gestiona la inserción en la BBDD documental (MongoDB).
+ * Clase que gestiona la inserción en el Mongo de persistencia.
  * Incluye tantos Access Object como esquemas de BBDD en las que va a insertar.
  * 
  *
  */
 public class DocumentDataAccessManager {
 
+	//Se definen constantes para accesos de inserción, actualización y borrado en la base de datos ontológica
 	public static final byte DOCUMENT_PERSON_INSERT = 1;
 	public static final byte DOCUMENT_ARTWORK_INSERT = 2;
 	public static final byte DOCUMENT_SHEMA_TEXT_INSERT = 3;
@@ -36,15 +33,24 @@ public class DocumentDataAccessManager {
 	public static final byte DOCUMENT_SHEMA_AUDIO_DELETE = 75;
 	public static final byte DOCUMENT_SHEMA_VIDEO_DELETE = 76;
 
-
+	//declaración de las variables de clase
 	private static DocumentDataAccessManager instance = null;
+	
+	//Acceso a la BBDD de persistencia
 	private DocumentDataAccessObject documentAO = new DocumentDataAccessObject();
+	
+	//Acceso a Big2
 	private TextAnalyticsDocumentAccesObject textAnalyticsAO =new TextAnalyticsDocumentAccesObject();
 	
-	private DocumentDataAccessManager() {
+	/**
+	 * Declaración del constructor. Privado para la implementación del patrón singleton
+	 */
+	private DocumentDataAccessManager() {}
 
-	}
-
+	/**
+	 * Métod estático para el acceso a la única instancia de la clase
+	 * @return
+	 */
 	public static final DocumentDataAccessManager getInstance() {
 		if (instance != null)
 			return instance;
@@ -75,6 +81,12 @@ public class DocumentDataAccessManager {
 	}
 
 	
+	/**
+	 * Inserción de los esquemas de los documentos
+	 * @param query
+	 * @param value
+	 * @throws Exception
+	 */
 	public void insert(byte query, TextAnalyticsSchema value) throws Exception {
 		switch (query) {
 		case DOCUMENT_SHEMA_TEXT_INSERT:
@@ -93,9 +105,9 @@ public class DocumentDataAccessManager {
 			break;
 		}
 	}
-	/////////////////////////////////////////////////////////////////
-	//   BLOQUE DE MÉTODOS DE INSERCIÓN EN LA BBDD DE ONTOLOGÍAS   //
-	/////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//  INSERCIÓN DE LA INFORMACIÓN INSERTADA EN LA BBDD DE ONTOLOGIAS  //  
+	//////////////////////////////////////////////////////////////////////
 	
 	/**
 	 * Inserta nodos de tipo persona, lo cual incluye directores, escritores
@@ -117,7 +129,7 @@ public class DocumentDataAccessManager {
 	
 	
 	//////////////////////////////////////////////////////////////////////
-	//   BLOQUE DE MÉTODOS DE INSERCIÓN DE LA SALIDA DE TEXT ANALYTICS  //
+	//   BLOQUE DE MÉTODOS DE INSERCIÓN EN BIG1                         //
 	//////////////////////////////////////////////////////////////////////
 	/**
 	 * Inserta en el esquema de text analytics la salida del análisis de la 

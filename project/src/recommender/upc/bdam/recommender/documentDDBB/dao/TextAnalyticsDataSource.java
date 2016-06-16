@@ -2,7 +2,9 @@ package upc.bdam.recommender.documentDDBB.dao;
 
 import org.bson.Document;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -11,6 +13,7 @@ import upc.bdam.recommender.consumer.schema.SchemaAudioBean;
 import upc.bdam.recommender.consumer.schema.SchemaTextBean;
 import upc.bdam.recommender.consumer.schema.SchemaVideoBean;
 import upc.bdam.recommender.consumer.schema.SchemaWebBean;
+
 
 public class TextAnalyticsDataSource {
 
@@ -36,27 +39,32 @@ public class TextAnalyticsDataSource {
 	private MongoCollection<Document> audioCollection;
 	private MongoCollection<Document> textCollection;
 	private MongoCollection<Document> webCollection;
+	private MongoCollection<Document> texts;
+
+	
 
 	private MongoClient client;
-	private MongoDatabase database;
+	private MongoDatabase big1;
+	private MongoDatabase big2;
 
 	public TextAnalyticsDataSource() {
 		client = new MongoClient();
 
 		// se crea la base de datos del ejercicio y sus colecciones
-		database = client.getDatabase("textAnalyticsOutput");
+		big1 = client.getDatabase("big1");
+		big2 = client.getDatabase("big2");
 
-		audioCollection = database.getCollection(TEXT_ANALYTICS_AUDIO_COLLECTION);
-		textCollection = database.getCollection(TEXT_ANALYTICS_TEXT_COLLECTION);
-		videoCollection = database.getCollection(TEXT_ANALYTICS_VIDEO_COLLECTION);
-		webCollection = database.getCollection(TEXT_ANALYTICS_WEB_COLLECTION);
+		audioCollection = big1.getCollection(TEXT_ANALYTICS_AUDIO_COLLECTION);
+		textCollection = big1.getCollection(TEXT_ANALYTICS_TEXT_COLLECTION);
+		videoCollection = big1.getCollection(TEXT_ANALYTICS_VIDEO_COLLECTION);
+		webCollection = big1.getCollection(TEXT_ANALYTICS_WEB_COLLECTION);
 	}
 
 	public void insertAudioSchema(SchemaAudioBean value) {
 
 		Document audio = new Document();
-		Metadata metadata=value.getMetadata();
-		
+		Metadata metadata = value.getMetadata();
+
 		audio.put(TEXT_ANALYTICS_TIMESTAMP, value.getTimestamp());
 		audio.put(TEXT_ANALYTICS_FILE_TYPE, value.getFileType());
 		audio.put(TEXT_ANALYTICS_USER_ID, value.getUserId());
@@ -73,7 +81,7 @@ public class TextAnalyticsDataSource {
 	public void insertVideoSchema(SchemaVideoBean value) {
 
 		Document video = new Document();
-		Metadata metadata=value.getMetadata();
+		Metadata metadata = value.getMetadata();
 
 		video.put(TEXT_ANALYTICS_TIMESTAMP, value.getTimestamp());
 		video.put(TEXT_ANALYTICS_FILE_TYPE, value.getFileType());
@@ -91,7 +99,7 @@ public class TextAnalyticsDataSource {
 	public void insertTextSchema(SchemaTextBean value) {
 
 		Document text = new Document();
-		Metadata metadata=value.getMetadata();
+		Metadata metadata = value.getMetadata();
 
 		text.put(TEXT_ANALYTICS_TIMESTAMP, value.getTimestamp());
 		text.put(TEXT_ANALYTICS_FILE_TYPE, value.getFileType());
@@ -110,15 +118,22 @@ public class TextAnalyticsDataSource {
 	public void insertWebSchema(SchemaWebBean value) {
 
 		Document web = new Document();
-		
+
 		web.put(TEXT_ANALYTICS_TIMESTAMP, value.getTimestamp());
 		web.put(TEXT_ANALYTICS_USER_ID, value.getUserId());
 		web.put(TEXT_ANALYTICS_STATUS, value.getStatus());
 		web.put(TEXT_ANALYTICS_CONTENT, value.getContent());
 		web.put(TEXT_ANALYTICS_URL, value.getUrl());
 
-
 		webCollection.insertOne(web);
+	}
+
+	public FindIterable<Document> hayNuevosDatos(long timestamp) {
+		texts= big2.getCollection("texts");
+		BasicDBObject gtQuery = new BasicDBObject();
+		//gtQuery.put("id", new BasicDBObject("$gt", 7).append("$lt", 9));
+		gtQuery.put("id", new BasicDBObject("$gt", timestamp));
+		return texts.find(gtQuery);
 	}
 
 }
