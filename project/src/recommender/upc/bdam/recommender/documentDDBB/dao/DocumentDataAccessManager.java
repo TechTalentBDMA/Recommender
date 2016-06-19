@@ -1,6 +1,12 @@
 package upc.bdam.recommender.documentDDBB.dao;
 
-import upc.bdam.recommender.consumer.schema.TextAnalyticsSchema;
+import java.util.Date;
+
+import upc.bdam.recommender.consumer.schema.SchemaAudioBean;
+import upc.bdam.recommender.consumer.schema.SchemaTextBean;
+import upc.bdam.recommender.consumer.schema.SchemaVideoBean;
+import upc.bdam.recommender.consumer.schema.SchemaWebBean;
+import upc.bdam.recommender.kafka.KafkaBean;
 import upc.bdam.recommender.ontology.json.IBinding;
 
 /**
@@ -87,7 +93,7 @@ public class DocumentDataAccessManager {
 	 * @param value
 	 * @throws Exception
 	 */
-	public void insert(byte query, TextAnalyticsSchema value) throws Exception {
+	public void insert(byte query, KafkaBean value) throws Exception {
 		switch (query) {
 		case DOCUMENT_SHEMA_TEXT_INSERT:
 			consumeText(value);
@@ -136,7 +142,16 @@ public class DocumentDataAccessManager {
 	 * información de documentos de texto recabada de los usuarios del recomendador
 	 * @param text
 	 */
-	public void consumeText(TextAnalyticsSchema text){
+	private void consumeText(KafkaBean value){
+
+		Date timestamp=new Date();
+		SchemaTextBean text=new SchemaTextBean();
+		text.setContent(value.getContent());
+		text.setFileType(value.getMimeType());
+		text.setTimestamp(timestamp.getTime());
+		text.setUserId(value.getId());
+		//web.setMetadata(value.getMetadata());
+	
 		textAnalyticsAO.consumeText(text);
 	}
 	
@@ -145,7 +160,14 @@ public class DocumentDataAccessManager {
 	 * información de análisis de navegación web recabada de los usuarios del recomendador
 	 * @param video
 	 */
-	public void consumeWeb(TextAnalyticsSchema web){
+	private void consumeWeb(KafkaBean value){
+		Date timestamp=new Date();
+		SchemaWebBean web=new SchemaWebBean();
+		web.setContent(value.getContent());
+//		audio.setMetadata(value.getMetadata());
+		web.setTimestamp(timestamp.getTime());
+		web.setUserId(value.getId());
+		web.setUrl(value.getMetadata());
 		textAnalyticsAO.consumeWeb(web);
 	}
 	
@@ -154,7 +176,13 @@ public class DocumentDataAccessManager {
 	 * información de documentos de audio recabada de los usuarios del recomendador
 	 * @param audio
 	 */
-	public void consumeAudio(TextAnalyticsSchema audio){
+	private void consumeAudio(KafkaBean value){
+		Date timestamp=new Date();
+		SchemaAudioBean audio=new SchemaAudioBean();
+		audio.setFileType("");
+//		audio.setMetadata(value.getMetadata());
+		audio.setTimestamp(timestamp.getTime());
+		audio.setUserId(value.getId());
 		textAnalyticsAO.consumeAudio(audio);
 	}
 	
@@ -163,7 +191,31 @@ public class DocumentDataAccessManager {
 	 * información de documentos de video recabada de los usuarios del recomendador
 	 * @param audio
 	 */
-	public void consumeVideo(TextAnalyticsSchema video){
+	private void consumeVideo(KafkaBean value){
+		Date timestamp=new Date();
+		SchemaVideoBean video=new SchemaVideoBean();
+		video.setFileType("");
+//		audio.setMetadata(value.getMetadata());
+		video.setTimestamp(timestamp.getTime());
+		video.setUserId(value.getId());
 		textAnalyticsAO.consumeVideo(video);
+	}
+	
+	public void consume(KafkaBean bean){
+		byte tipo=bean.getType();
+		switch(tipo){
+		case KafkaBean.KAFKA_AUDIO:
+			consumeAudio(bean);
+			break;
+		case KafkaBean.KAFKA_TEXTO:
+			consumeText(bean);
+			break;
+		case KafkaBean.KAFKA_VIDEO:
+			consumeVideo(bean);
+			break;
+		case KafkaBean.KAFKA_WEB:
+			consumeWeb(bean);
+			break;
+		}
 	}
 }

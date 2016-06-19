@@ -21,6 +21,15 @@ import upc.bdam.recommender.ontology.json.artwork.ArtWork;
 import upc.bdam.recommender.ontology.json.author.Author;
 import upc.bdam.recommender.ontology.json.relation.ArtWorkAuthorRelation;
 
+/**
+ * 
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
 public class GraphDataSource {
 
 	static final String NEO4J_DDBB = "neo4JDB";

@@ -11,21 +11,21 @@ public class Metadata {
 	//De los documetnos que he probado todos estos campos vienen
 	//vacíos. Así que de momento los he dejado declarados como 
 	//object y no he creado sus getters y setters
-	private Object creatroTool;
-	private Object format;
-	private Object identifier;
-	private Object keywords;
-	private Object language;
-	private Object latitude;
-	private Object longitude;
-	private Object metadataDate;
-	private Object modifier;
-	private Object printDate;
-	private Object publisher;
-	private Object rating;
-	private Object relation;
-	private Object rights;
-	private Object source;
+//	private Object creatroTool;
+//	private Object format;
+//	private Object identifier;
+//	private Object keywords;
+//	private Object language;
+//	private Object latitude;
+//	private Object longitude;
+//	private Object metadataDate;
+//	private Object modifier;
+//	private Object printDate;
+//	private Object publisher;
+//	private Object rating;
+//	private Object relation;
+//	private Object rights;
+//	private Object source;
 
 	public long getCreated() {
 		return created;

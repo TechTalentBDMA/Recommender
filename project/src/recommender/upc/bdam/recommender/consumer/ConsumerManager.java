@@ -5,6 +5,7 @@ import upc.bdam.recommender.consumer.schema.SchemaTextBean;
 import upc.bdam.recommender.consumer.schema.SchemaVideoBean;
 import upc.bdam.recommender.consumer.schema.SchemaWebBean;
 import upc.bdam.recommender.documentDDBB.dao.DocumentDataAccessManager;
+import upc.bdam.recommender.kafka.KafkaBean;
 
 /**
  * Clase intermediaria entre el consumer kafka y el mongo Big1
@@ -40,31 +41,8 @@ public class ConsumerManager {
 	 * Transfiere los datos de los ficheros de texto
 	 * @param text
 	 */
-	public void consumeText(SchemaTextBean text) {
-		DocumentDataAccessManager.getInstance().consumeText(text);
+	public void consume(KafkaBean bean) {
+		DocumentDataAccessManager.getInstance().consume(bean);
 	}
 
-	/**
-	 * Transfiere los datos obtenidos de la web
-	 * @param web
-	 */
-	public void consumeWeb(SchemaVideoBean web) {
-		DocumentDataAccessManager.getInstance().consumeWeb(web);
-	}
-
-	/**
-	 * Transfiere los datos de los ficheros de audio
-	 * @param audio
-	 */
-	public void consumeAudio(SchemaAudioBean audio) {
-		DocumentDataAccessManager.getInstance().consumeAudio(audio);
-	}
-
-	/**
-	 * Transfiere los datos de los ficheros de vídeo.
-	 * @param video
-	 */
-	public void consumeVideo(SchemaWebBean video) {
-		DocumentDataAccessManager.getInstance().consumeVideo(video);
-	}
 }
