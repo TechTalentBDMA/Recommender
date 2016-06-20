@@ -1,8 +1,8 @@
 SELECT
-		(REPLACE(str(?memberOf), "http://www.wikidata.org/entity/", "") as ?authorId)
-		(REPLACE(str(?band), "http://www.wikidata.org/entity/", "") as ?artWorkId)
-		(?memberOfLabel as ?authorName)
-		(?bandLabel as ?artWorkTitle)
+		(REPLACE(str(?memberOf), "http://www.wikidata.org/entity/", "") as ?leftId)
+		(REPLACE(str(?band), "http://www.wikidata.org/entity/", "") as ?rightId)
+		(?memberOfLabel as ?leftName)
+		(?bandLabel as ?rightName)
  WHERE
 {
 		?band			wdt:P31			wd:Q215380 .
@@ -13,5 +13,4 @@ SELECT
   		FILTER (lang(?memberOfLabel) = 'en') .
   		FILTER (lang(?bandLabel) = 'en') .
 }
-GROUP BY ?memberOf ?band ?memberOfLabel ?bandLabel
-ORDER BY ?memberOfLabel
+ORDER BY ?bandLabel ?memberOfLabel

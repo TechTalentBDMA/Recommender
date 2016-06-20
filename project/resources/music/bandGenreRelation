@@ -1,0 +1,55 @@
+SELECT
+		DISTINCT 
+		(?artWorkId as ?leftId)
+		(?genreId as ?rightId)
+		(?artWorkTitle as ?leftName)
+		(?genreName as ?rightName)
+ WHERE
+{
+		# Node of band
+		{
+		SELECT
+				DISTINCT
+				(replace(str(?band), 'http://www.wikidata.org/entity/', '') as ?artWorkId)
+				(?bandLabel as ?artWorkTitle)
+				(replace(str(?genre), 'http://www.wikidata.org/entity/', '') as ?genreId)
+				(?genreLabel as ?genreName)
+		 WHERE
+		{
+				?band			wdt:P31			wd:Q215380 .
+				?band			rdfs:label		?bandLabel .
+				?band			wdt:P136		?genre .
+				?genre			rdfs:label		?genreLabel .
+				
+				FILTER(lang(?bandLabel) = 'en') .
+				FILTER(lang(?genreLabel) = 'en') .
+		}
+		} UNION {
+		# Band who plays Songs
+		SELECT
+				DISTINCT
+				(replace(str(?song), 'http://www.wikidata.org/entity/', '') as ?artWorkId)
+				(?songLabel as ?artWorkTitle)
+				(replace(str(?genre), 'http://www.wikidata.org/entity/', '') as ?genreId)
+				(?genreLabel as ?genreName)
+		 WHERE
+		{
+				?song			wdt:P31			wd:Q7366 .
+				?song			rdfs:label		?songLabel .
+				?song			wdt:P175		?performer .
+				?performer		rdfs:label		?performerLabel .
+			OPTIONAL {
+				?performer		wdt:P31			?instanceOf .
+				?instanceOf		rdfs:label		?instanceOfLabel .
+				FILTER(lang(?instanceOfLabel) = 'en') .                  
+			}
+				?song			wdt:P136		?genre .
+				?genre			rdfs:label		?genreLabel .
+
+				FILTER(lang(?performerLabel)='en') .
+				FILTER NOT EXISTS {FILTER regex(?instanceOfLabel, 'human')} .
+				FILTER(lang(?genreLabel) = 'en') .
+		}
+		}
+}
+ORDER BY ?artWorkTitle ?genreName

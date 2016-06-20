@@ -1,26 +1,22 @@
-SELECT	
-		DISTINCT
+SELECT
 		(REPLACE(str(?actor), 'http://www.wikidata.org/entity/', '') as ?id)
 		(?actorLabel as ?name)
-		(concat(str(day(?dateOfBirth)), "/", str(month(?dateOfBirth)), "/", str(year(?dateOfBirth))) as ?born)
- WHERE								
-{								
-		?film			wdt:P31			wd:Q11424 .
-		?film			rdfs:label		?filmLabel .	
-		?film			wdt:P161		wd:Q43416 .
-		?film 			wdt:P161 		?actor .	
-		?actor 			rdfs:label 		?actorLabel .
+		(MIN(str(year(?dateOfBirth))) as ?born) 
+ WHERE
+{
+		?actor		wdt:P31			wd:Q5 .
+		{?actorRef rdfs:label "Clint Eastwood"@en .}
+
+  		?film		wdt:P31			wd:Q11424 .
+  		?film		wdt:P161		?actorRef .
+		?film		wdt:P161		?actor .
+		?actor		rdfs:label		?actorLabel .
+	OPTIONAL {
 		?actor			wdt:P569		?dateOfBirth .
-	OPTIONAL {
-		?actor 				p:P569							?propdateOfBirth .
-		?propdateOfBirth	ps:P569							?dateOfBirth .
-		?propdateOfBirth	prov:wasDerivedFrom/pr:P813		?retrieved .
 	}
-	OPTIONAL {
-		?actor 				p:P569							?propdateOfBirth .
-		?propdateOfBirth	ps:P569							?dateOfBirth .
-		?propdateOfBirth	prov:wasDerivedFrom/pr:P143		?importedFrom .      	
-	}
-		FILTER (lang(?actorLabel) = 'en') .						
+
+		FILTER (lang(?actorLabel) = 'en') .
+  		SERVICE wikibase:label {bd:serviceParam wikibase:language 'en' .}
 }
+GROUP BY ?actor ?actorLabel
 ORDER BY ?actorLabel

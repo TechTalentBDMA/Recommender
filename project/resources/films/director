@@ -1,18 +1,83 @@
-SELECT 
+SELECT
 		DISTINCT
-		(REPLACE(str(?director), 'http://www.wikidata.org/entity/', '') as ?id)
-		(?directorLabel as ?name)
-		(concat(str(day(?dateOfBirth)), "/", str(month(?dateOfBirth)), "/", str(year(?dateOfBirth))) as ?born)	
- WHERE 
+		?id ?name ?born
+ WHERE
 {
-		?film				wdt:P31 			wd:Q11424 .
-		?film				rdfs:label 			?filmLabel .
-		?film				wdt:P161			wd:Q43416 .
-		wd:Q43416			rdfs:label			?actorLabel .
-  		?film 				wdt:P57				?director .
-  		?director			rdfs:label			?directorLabel .
-  		?director			wdt:P569			?dateOfBirth
-		FILTER (lang(?filmLabel) = "en") .
-  		FILTER (lang(?directorLabel) = "en") .
+		# Node Member of band
+		{
+		SELECT
+				(REPLACE(str(?memberOf), 'http://www.wikidata.org/entity/', '') as ?id)
+				(?memberOfLabel as ?name)
+				(MIN(str(year(?dateOfBirth))) as ?born)	
+		 WHERE
+		{
+				?band			wdt:P31			wd:Q215380 .
+				?band			wdt:P527		?memberOf .
+				?memberOf		rdfs:label		?memberOfLabel .
+			OPTIONAL {
+				?memberOf		wdt:P569		?dateOfBirth .
+				}
+				FILTER (lang(?memberOfLabel)  =  'en') .
+		}
+		GROUP BY ?memberOf ?memberOfLabel
+		} UNION {
+		# Node Musician
+		SELECT
+				(REPLACE(str(?performer), 'http://www.wikidata.org/entity/', '') as ?id)
+				(?performerLabel as ?name)
+				(MIN(str(year(?dateOfBirth))) as ?born)
+		 WHERE
+		{
+				?song			wdt:P31			wd:Q7366 .
+				?song			wdt:P175		?performer .
+				?performer		rdfs:label		?performerLabel .
+			OPTIONAL {
+				?performer		wdt:P31			?instanceOf .
+				?instanceOf		rdfs:label		?instanceOfLabel .
+				FILTER(lang(?instanceOfLabel) = 'en') .                  
+			}
+			OPTIONAL {
+				?performer		wdt:P569		?dateOfBirth .
+			}
+				FILTER(lang(?performerLabel) = 'en') .
+				FILTER regex(?instanceOfLabel, 'human') .
+		}
+		GROUP BY ?performer ?performerLabel
+		} UNION {
+		# Node Writer
+		SELECT
+				(REPLACE(str(?author), "http://www.wikidata.org/entity/", "") as ?id)
+				(?authorLabel as ?name)
+				(MIN(str(year(?dateOfBirth))) as ?born)	
+		 WHERE
+		 {
+				?book			wdt:P31			wd:Q571 .
+				?book			wdt:P50			?author .
+				?author			rdfs:label		?authorLabel .
+			OPTIONAL {
+				?author			wdt:P569		?dateOfBirth .
+				}
+				
+				FILTER(lang(?authorLabel) = 'en') .
+		}
+		GROUP BY ?author ?authorLabel
+		} UNION {
+		# Node Director
+		SELECT
+				(REPLACE(str(?director), 'http://www.wikidata.org/entity/', '') as ?id)
+				(?directorLabel as ?name)
+				(MIN(str(year(?dateOfBirth))) as ?born)	
+		 WHERE
+		{
+				?film			wdt:P31			wd:Q11424 .
+				?film 			wdt:P57			?director .
+				?director		rdfs:label		?directorLabel .
+			OPTIONAL {
+				?director		wdt:P569		?dateOfBirth .
+				}
+				FILTER (lang(?directorLabel)  =  'en') .
+		}
+		GROUP BY ?director ?directorLabel
+		}
 }
-ORDER BY ?directorLabel
+ORDER BY ?name

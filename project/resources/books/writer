@@ -1,43 +1,66 @@
 SELECT
-        (REPLACE(str(?author), "http://www.wikidata.org/entity/", "") as ?id)
-        (?authorLabel as ?name)
-        ?born
+		DISTINCT
+		?id ?name ?born
  WHERE
 {
+		# Node Member of band
+		{
 		SELECT
-				?author
-				?authorLabel
-				(concat(str(day(?dateOfBirth)), "/", str(month(?dateOfBirth)), "/", str(year(?dateOfBirth))) as ?born)
-				?occupation
-              	?occupationLabel
-				(count(1) as ?nAuthor)
-         WHERE
-        {
+				(REPLACE(str(?memberOf), 'http://www.wikidata.org/entity/', '')as ?id)
+				(?memberOfLabel as ?name)
+				(MIN(str(year(?dateOfBirth))) as ?born)	
+		 WHERE
+		{
+				?band			wdt:P31			wd:Q215380 .
+				?band			wdt:P527		?memberOf .
+				?memberOf		rdfs:label		?memberOfLabel .
+			OPTIONAL {
+				?memberOf		wdt:P569		?dateOfBirth .
+				}
+				FILTER (lang(?memberOfLabel)  =  'en') .
+		}
+		GROUP BY ?memberOf ?memberOfLabel
+		} UNION {
+		# Node Musician
+		SELECT
+				(REPLACE(str(?performer), 'http://www.wikidata.org/entity/', '') as ?id)
+				(?performerLabel as ?name)
+				(MIN(str(year(?dateOfBirth))) as ?born)
+		 WHERE
+		{
+				?song			wdt:P31			wd:Q7366 .
+				?song			wdt:P175		?performer .
+				?performer		rdfs:label		?performerLabel .
+			OPTIONAL {
+				?performer		wdt:P31			?instanceOf .
+				?instanceOf		rdfs:label		?instanceOfLabel .
+				FILTER(lang(?instanceOfLabel) = 'en') .                  
+			}
+			OPTIONAL {
+				?performer		wdt:P569		?dateOfBirth .
+			}
+				FILTER(lang(?performerLabel) = 'en') .
+				FILTER regex(?instanceOfLabel, 'human') .
+		}
+		GROUP BY ?performer ?performerLabel
+		} UNION {
+		# Node Writer
+		SELECT
+				(REPLACE(str(?author), "http://www.wikidata.org/entity/", "") as ?id)
+				(?authorLabel as ?name)
+				(MIN(str(year(?dateOfBirth))) as ?born)	
+		 WHERE
+		 {
 				?book			wdt:P31			wd:Q571 .
 				?book			wdt:P50			?author .
 				?author			rdfs:label		?authorLabel .
 			OPTIONAL {
-  				?author			wdt:P569		?dateOfBirth .
-			}
-			OPTIONAL {
-                ?author			wdt:P106		?occupation .
-                ?occupation		rdfs:label		?occupationLabel .
-  				FILTER (lang(?occupationLabel) = 'en') .
-			}
-
-                FILTER(lang(?authorLabel) = 'en') .
-          		FILTER(lang(?occupationLabel) = 'en') .
-        }
-		GROUP BY
-				?author
-				?authorLabel
-				?dateOfBirth
-				?occupation
-                ?occupationLabel
+				?author			wdt:P569		?dateOfBirth .
+				}
+				
+				FILTER(lang(?authorLabel) = 'en') .
+		}
+		GROUP BY ?author ?authorLabel
+		}
 }
-GROUP BY
-        ?author
-        ?authorLabel
-        ?born
-ORDER BY
-        ?authorLabel
+ORDER BY ?name

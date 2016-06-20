@@ -1,14 +1,25 @@
 package upc.bdam.recommender.ontology.json.relation;
 
+/**
+ * Clase en la que se encapsula el resultado dentro del JSON devuelto por wikidata
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
 public class RelationResult{
 	
-	private ArtWorkAuthorRelation[] bindings;
+	//array de resultados
+	private LeftRightRelation[] bindings;
 
-	public ArtWorkAuthorRelation[] getBindings() {
+	//declaración de métodos de acceso
+	public LeftRightRelation[] getBindings() {
 		return bindings;
 	}
 
-	public void setBindings(ArtWorkAuthorRelation[] bindings) {
+	public void setBindings(LeftRightRelation[] bindings) {
 		this.bindings = bindings;
 	}
 }

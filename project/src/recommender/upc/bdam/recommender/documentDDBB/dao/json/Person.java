@@ -1,5 +1,14 @@
 package upc.bdam.recommender.documentDDBB.dao.json;
 
+/**
+ * Clase que encapsula los datos relativos a una persona
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
 public class Person {
 
 	public String id = new String();

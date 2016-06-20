@@ -1,19 +1,18 @@
-SELECT		
-		(replace(str(?director), "http://www.wikidata.org/entity/", "") as ?authorId)
-		(replace(str(?film), "http://www.wikidata.org/entity/", "") as ?artWorkId)
-		(?filmLabel as ?artWorkTitle)
-		(?directorLabel as ?authorName)
-		#?DirectorFilm
- WHERE								
-{								
-  		?film			wdt:P31			wd:Q11424 .
-		?film			rdfs:label		?filmLabel .
-		?film			wdt:P161		wd:Q43416 .
-  		?film 			wdt:P57 		?director .
-  		?director		rdfs:label 		?directorLabel .	
-			
+SELECT
+		DISTINCT 
+		(replace(str(?director), 'http://www.wikidata.org/entity/', '') as ?leftId)
+		(replace(str(?film), 'http://www.wikidata.org/entity/', '') as ?rightId)
+		(?directorLabel as ?leftName)
+		(?filmLabel as ?rightName)
+WHERE
+{
+		?film		wdt:P31			wd:Q11424 .
+		?film		rdfs:label		?filmLabel .
+		?film 		wdt:P57 		?director .
+  		?director	rdfs:label 		?directorLabel .
+
   		FILTER (lang(?directorLabel) = 'en') .
   		FILTER (lang(?filmLabel) = 'en') .
-		BIND(concat("(", replace(str(?director), "http://www.wikidata.org/entity/", ""), ")-[:DIRECTED]->(", replace(str(?film), "http://www.wikidata.org/entity/", ""), "),") AS ?DirectorFilm) .
+		SERVICE wikibase:label {bd:serviceParam wikibase:language 'en' .}
 }
 ORDER BY ?filmLabel ?directorLabel

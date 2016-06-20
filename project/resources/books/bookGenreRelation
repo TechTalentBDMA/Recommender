@@ -1,0 +1,17 @@
+SELECT
+		DISTINCT
+		(replace(str(?book), 'http://www.wikidata.org/entity/', '') as ?leftId)
+		(replace(str(?genre), 'http://www.wikidata.org/entity/', '') as ?rightId)
+		(?bookLabel as ?leftName)
+		(?genreLabel as ?rightName)
+ WHERE
+{
+		?book			wdt:P31			wd:Q571 .
+		?book			rdfs:label		?bookLabel .
+		?book			wdt:P136		?genre .
+		?genre			rdfs:label		?genreLabel .
+
+		FILTER (lang(?bookLabel) = 'en') .
+		FILTER (lang(?genreLabel) = 'en') .
+}
+ORDER BY ?bookLabel ?genreLabel

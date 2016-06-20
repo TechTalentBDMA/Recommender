@@ -9,17 +9,21 @@ import java.util.Map;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.kernel.impl.core.NodeProxy;
 
 import upc.bdam.recommender.config.PropertiesLoader;
-import upc.bdam.recommender.graph.dao.GraphDataAccessObject.ArtWorkNodeType;
-import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonNodeType;
-import upc.bdam.recommender.graph.dao.GraphDataAccessObject.RelationType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.ArtWorkNodeSubType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.NodeType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonNodeSubType;
 import upc.bdam.recommender.ontology.json.artwork.ArtWork;
 import upc.bdam.recommender.ontology.json.author.Author;
+import upc.bdam.recommender.ontology.json.band.Band;
+import upc.bdam.recommender.ontology.json.genre.Genre;
 import upc.bdam.recommender.ontology.json.relation.ArtWorkAuthorRelation;
+import upc.bdam.recommender.ontology.json.relation.LeftRightRelation;
 
 /**
  * 
@@ -81,30 +85,80 @@ public class GraphDataSource {
 		return everything;
 	}
 
-	public void insertPersonNode(Author author, PersonNodeType type) {
+	public void insertGenreNode(Genre genre, NodeType type) {
+
+		Node node = graph.createNode(type);
+
+		node.setProperty(GraphDataAccessObject.GENRE_NODE_ID, genre.getId().getValue());
+		node.setProperty(GraphDataAccessObject.GENRE_NODE_NAME, genre.getName().getValue());
+		//node.setProperty(Neo4JDataAccessObject.GENRE_NODE_NAME_NORM, genre.getNameNormalized().getValue());
+	}
+
+	public void insertPersonNode(Author author, NodeType type, PersonNodeSubType subtype) {
 
 		Node node = graph.createNode(type);
 
 		node.setProperty(GraphDataAccessObject.PERSON_NODE_ID, author.getId().getValue());
 		node.setProperty(GraphDataAccessObject.PERSON_NODE_BORN, author.getBorn().getValue());
 		node.setProperty(GraphDataAccessObject.PERSON_NODE_NAME, author.getName().getValue());
+		node.setProperty(GraphDataAccessObject.NODE_TYPE, type.name());
+		node.setProperty(GraphDataAccessObject.NODE_SUB_TYPE,subtype.name());
 	}
 
-	public void insertArtWorkNode(ArtWork artWork, ArtWorkNodeType type) {
+	public void insertBandNode(Band band, NodeType type) {
+
+		Node node = graph.createNode(type);
+
+		node.setProperty(GraphDataAccessObject.BAND_NODE_ID, band.getId().getValue());
+		node.setProperty(GraphDataAccessObject.BAND_NODE_RELEASED, band.getReleased().getValue());
+		node.setProperty(GraphDataAccessObject.BAND_NODE_NAME, band.getName().getValue());
+		node.setProperty(GraphDataAccessObject.NODE_TYPE, type);
+	}
+
+	public void insertArtWorkNode(ArtWork artWork, NodeType type, ArtWorkNodeSubType subtype ) {
 
 		Node node = graph.createNode(type);
 
 		node.setProperty(GraphDataAccessObject.ARTWORK_NODE_ID, artWork.getId().getValue());
 		node.setProperty(GraphDataAccessObject.ARTWORK_NODE_RELEASED, artWork.getReleased().getValue());
 		node.setProperty(GraphDataAccessObject.ARTWORK_NODE_TITLE, artWork.getTitle().getValue());
-		node.setProperty(GraphDataAccessObject.ARTWORK_NODE_GENRE, artWork.getGenre().getValue());
+		node.setProperty(GraphDataAccessObject.NODE_TYPE, type.name());
+		node.setProperty(GraphDataAccessObject.NODE_SUB_TYPE, subtype.name());
 	}
 
-	public void insertRelation(ArtWorkAuthorRelation relation, RelationType relationType, PersonNodeType personType, Label label ) {
+/*	public void insertRelationAuthorBand(AuthorBandRelation relation, PersonRelationType relationType, NodeType personType, Label label ) {
 
 		String authorQuery = "MATCH (c1:"+personType+") WHERE c1.id='" + relation.getAuthorId().getValue()
 				+ "' RETURN DISTINCT c1;";
+		String bandQuery = "MATCH (c1:"+label+") WHERE c1.id='" + relation.getBandId().getValue()
+				+ "' RETURN DISTINCT c1;";
+
+		NodeProxy authorNode = executeNeo4jQuery(authorQuery);
+		NodeProxy bandNode = executeNeo4jQuery(bandQuery);
+
+		if (authorNode != null && bandNode != null)
+			authorNode.createRelationshipTo(bandNode, relationType);
+	}*/
+
+/*	public void insertRelationBandArtWork(BandArtWorkRelation relation, PersonRelationType relationType, NodeType bandType, Label label ) {
+
+		String bandQuery = "MATCH (c1:"+bandType+") WHERE c1.id='" + relation.getBandId().getValue()
+				+ "' RETURN DISTINCT c1;";
 		String artWorkQuery = "MATCH (c1:"+label+") WHERE c1.id='" + relation.getArtWorkId().getValue()
+				+ "' RETURN DISTINCT c1;";
+
+		NodeProxy bandNode = executeNeo4jQuery(bandQuery);
+		NodeProxy artWorkNode = executeNeo4jQuery(artWorkQuery);
+
+		if (bandNode != null && artWorkNode != null)
+			bandNode.createRelationshipTo(artWorkNode, relationType);
+	}*/
+	
+	public void insertRelation(LeftRightRelation relation, RelationshipType relationType, NodeType personType, Label label) {
+
+		String authorQuery = "MATCH (c1:"+personType+") WHERE c1.id='" + relation.getLeftId().getValue()
+				+ "' RETURN DISTINCT c1;";
+		String artWorkQuery = "MATCH (c1:"+label+") WHERE c1.id='" + relation.getRightId().getValue()
 				+ "' RETURN DISTINCT c1;";
 
 		NodeProxy authorNode = executeNeo4jQuery(authorQuery);
@@ -113,6 +167,20 @@ public class GraphDataSource {
 		if (authorNode != null && artWorkNode != null)
 			authorNode.createRelationshipTo(artWorkNode, relationType);
 	}
+
+/*	public void insertRelationArtWorkGenre(ArtWorkGenreRelation relation, GenreRelationType relationType, NodeType artWorkType, Label label ) {
+
+		String artWorkQuery = "MATCH (c1:"+artWorkType+") WHERE c1.id='" + relation.getArtWorkId().getValue()
+				+ "' RETURN DISTINCT c1;";
+		String genreQuery = "MATCH (c1:"+label+") WHERE c1.id='" + relation.getGenreId().getValue()
+				+ "' RETURN DISTINCT c1;";
+
+		NodeProxy artWorkNode = executeNeo4jQuery(artWorkQuery);
+		NodeProxy genreNode = executeNeo4jQuery(genreQuery);
+
+		if (artWorkNode != null && genreNode != null)
+			artWorkNode.createRelationshipTo(genreNode, relationType);
+	}*/
 
 	private NodeProxy executeNeo4jQuery(String query) {
 		NodeProxy resultado = null;

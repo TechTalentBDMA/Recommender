@@ -1,0 +1,17 @@
+SELECT
+		DISTINCT 
+		(replace(str(?song), 'http://www.wikidata.org/entity/', '') as ?leftId)
+		(replace(str(?genre), 'http://www.wikidata.org/entity/', '') as ?rightId)
+		(?songLabel as ?leftName)
+		(?genreLabel as ?rightName)
+ WHERE
+{
+		?song			wdt:P31			wd:Q7366 .
+		?song			rdfs:label		?songLabel .
+		?song			wdt:P136		?genre .
+		?genre			rdfs:label		?genreLabel .
+
+		FILTER(lang(?songLabel) = 'en') .
+		FILTER(lang(?genreLabel) = 'en') .
+}
+ORDER BY ?songLabel ?genreLabel

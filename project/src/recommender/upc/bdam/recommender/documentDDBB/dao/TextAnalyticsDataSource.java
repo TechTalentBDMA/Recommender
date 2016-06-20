@@ -14,8 +14,18 @@ import upc.bdam.recommender.consumer.schema.SchemaTextBean;
 import upc.bdam.recommender.consumer.schema.SchemaVideoBean;
 import upc.bdam.recommender.consumer.schema.SchemaWebBean;
 
-
+/**
+ * 
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
 public class TextAnalyticsDataSource {
+	
+	//declaración de constantes de literales implicadas en la inserción.
 	public static final String TEXT_ANALYTICS_TIMESTAMP_BIG2="big2Timestamp";
 	public static final String TEXT_ANALYTICS_TIMESTAMP_ID="id";
 
@@ -37,18 +47,21 @@ public class TextAnalyticsDataSource {
 	private static String TEXT_ANALYTICS_VIDEO_COLLECTION = "videoSchema";
 	private static String TEXT_ANALYTICS_WEB_COLLECTION = "webSchema";
 
+	//declaraión de las listas de tipos de documentos
 	private MongoCollection<Document> videoCollection;
 	private MongoCollection<Document> audioCollection;
 	private MongoCollection<Document> textCollection;
 	private MongoCollection<Document> webCollection;
 	private MongoCollection<Document> texts;
-
 	
-
+	//conexiones a las instancias de MongoDB
 	private MongoClient client;
 	private MongoDatabase big1;
 	private MongoDatabase big2;
 
+	/**
+	 * Constructor de clase. Se establecen las conexiones a las instancias de MongoDB
+	 */
 	public TextAnalyticsDataSource() {
 		client = new MongoClient();
 
@@ -62,6 +75,10 @@ public class TextAnalyticsDataSource {
 		webCollection = big1.getCollection(TEXT_ANALYTICS_WEB_COLLECTION);
 	}
 
+	/**
+	 * Método especializado en la inserción de datos de audio procedentes de kafka en Big1
+	 * @param value
+	 */
 	public void insertAudioSchema(SchemaAudioBean value) {
 
 		Document audio = new Document();
@@ -80,6 +97,10 @@ public class TextAnalyticsDataSource {
 		audioCollection.insertOne(audio);
 	}
 
+	/**
+	 * Método especializado en la inserción de datos de video procedentes de kafka en Big1
+	 * @param value
+	 */
 	public void insertVideoSchema(SchemaVideoBean value) {
 
 		Document video = new Document();
@@ -98,6 +119,10 @@ public class TextAnalyticsDataSource {
 		videoCollection.insertOne(video);
 	}
 
+	/**
+	 * Método especializado en la inserción de datos de Texto procedentes de kafka en Big1
+	 * @param value
+	 */
 	public void insertTextSchema(SchemaTextBean value) {
 
 		Document text = new Document();
@@ -117,6 +142,10 @@ public class TextAnalyticsDataSource {
 		textCollection.insertOne(text);
 	}
 
+	/**
+	 * Método especializado en la inserción de datos web procedentes de kafka en Big1
+	 * @param value
+	 */
 	public void insertWebSchema(SchemaWebBean value) {
 
 		Document web = new Document();
@@ -130,6 +159,11 @@ public class TextAnalyticsDataSource {
 		webCollection.insertOne(web);
 	}
 
+	/**
+	 * Método con el que se consulta si existen más inserciones en Big2 desde la última lectura realizada
+	 * @param timestamp
+	 * @return
+	 */
 	public FindIterable<Document> hayNuevosDatos(long timestamp) {
 		texts= big2.getCollection("texts");
 		BasicDBObject gtQuery = new BasicDBObject();

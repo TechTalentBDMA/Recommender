@@ -1,30 +1,71 @@
-SELECT		
+SELECT
 		DISTINCT 
-		(replace(str(?actor), 'http://www.wikidata.org/entity/', '') as ?authorId)
-		(?actorLabel as ?authorName)
-		(replace(str(?film), 'http://www.wikidata.org/entity/', '') as ?artWorkId)
-		(?filmLabel as ?artWorkTitle)
-		(?roleLabel as ?role)
-		#?ActorRoleFilm
- WHERE								
-{								
-  		?film			wdt:P31			wd:Q11424 .
-		?film			rdfs:label		?filmLabel .	
-  		?film			wdt:P161		wd:Q43416 .
-  		?film 			wdt:P161 		?actor .	
-  		?actor 			rdfs:label 		?actorLabel .	
-	OPTIONAL {							
-  		?film 			p:P161			?statement .
-  		?statement		ps:P161 		?actor .		
-  		?statement		pq:P453			?role .	
-  		?role			rdfs:label		?roleLabel .	
-  		FILTER (lang(?roleLabel) = 'en') .  						
-	}							
-  		FILTER (lang(?actorLabel) = 'en') .						
-  		FILTER (lang(?filmLabel) = 'en') .						
-		BIND(if(bound(?roleLabel),
-           		concat('(', replace(str(?actor), 'http://www.wikidata.org/entity/', ''), ')-[:ACTED_IN {roles:["', ?roleLabel, '"]}]->(', replace(str(?film), 'http://www.wikidata.org/entity/', ''), '),'),
-           		concat('(', replace(str(?actor), 'http://www.wikidata.org/entity/', ''), ')-[:ACTED_IN]->(', replace(str(?film), 'http://www.wikidata.org/entity/', ''), '),'))
-          AS ?ActorRoleFilm) .
+		(replace(str(?actor), 'http://www.wikidata.org/entity/', '') as ?leftId)
+		(replace(str(?film), 'http://www.wikidata.org/entity/', '') as ?rightId)
+		(?actorLabel as ?leftName)
+		(?filmLabel as ?rightName)
+WHERE
+{
+		?actor		wdt:P31			wd:Q5 .
+		{?actorRef rdfs:label  "James Earl Jones"@en .} UNION
+		{?actorRef rdfs:label  "David Keith"@en .} UNION
+		{?actorRef rdfs:label  "Louise Fletcher"@en .} UNION
+		{?actorRef rdfs:label  "Ben Kingsley"@en .} UNION
+		{?actorRef rdfs:label  "Lee Van Cleef"@en .} UNION
+		{?actorRef rdfs:label  "Willem Dafoe"@en .} UNION
+		{?actorRef rdfs:label  "James Stewart"@en .} UNION
+		{?actorRef rdfs:label  "Jean Arthur"@en .} UNION
+		{?actorRef rdfs:label  "Dana Andrews"@en .} UNION
+		{?actorRef rdfs:label  "Bob Hoskins"@en .} UNION
+		{?actorRef rdfs:label  "Burt Lancaster"@en .} UNION
+		{?actorRef rdfs:label  "Fay Wray"@en .} UNION
+		{?actorRef rdfs:label  "Gene Hackman"@en .} UNION
+		{?actorRef rdfs:label  "Helen Mirren"@en .} UNION
+		{?actorRef rdfs:label  "Tom Berenger"@en .} UNION
+		{?actorRef rdfs:label  "Orson Welles"@en .} UNION
+		{?actorRef rdfs:label  "Scott Glenn"@en .} UNION
+		{?actorRef rdfs:label  "Lee J. Cobb"@en .} UNION
+		{?actorRef rdfs:label  "Claire Bloom"@en .} UNION
+		{?actorRef rdfs:label  "Yvonne De Carlo"@en .} UNION
+		{?actorRef rdfs:label  "Humphrey Bogart"@en .} UNION
+		{?actorRef rdfs:label  "Spencer Tracy"@en .} UNION
+		{?actorRef rdfs:label  "Ginger Rogers"@en .} UNION
+		{?actorRef rdfs:label  "Cary Grant"@en .} UNION
+		{?actorRef rdfs:label  "Daryl Hannah"@en .} UNION
+		{?actorRef rdfs:label  "Kathy Bates"@en .} UNION
+		{?actorRef rdfs:label  "Hector Elizondo"@en .} UNION
+		{?actorRef rdfs:label  "Richard Widmark"@en .} UNION
+		{?actorRef rdfs:label  "Robert Ryan"@en .} UNION
+		{?actorRef rdfs:label  "Ed Harris"@en .} UNION
+		{?actorRef rdfs:label  "Laurence Olivier"@en .} UNION
+		{?actorRef rdfs:label  "Robert Taylor"@en .} UNION
+		{?actorRef rdfs:label  "Jane Seymour"@en .} UNION
+		{?actorRef rdfs:label  "Sean Connery"@en .} UNION
+		{?actorRef rdfs:label  "Lesley Ann Warren"@en .} UNION
+		{?actorRef rdfs:label  "Jean Simmons"@en .} UNION
+		{?actorRef rdfs:label  "Antonio Banderas"@en .} UNION
+		{?actorRef rdfs:label  "Peter O'Toole"@en .} UNION
+		{?actorRef rdfs:label  "William Holden"@en .} UNION
+		{?actorRef rdfs:label  "Liam Neeson"@en .} UNION
+		{?actorRef rdfs:label  "Telly Savalas"@en .} UNION
+		{?actorRef rdfs:label  "Bruce Willis"@en .} UNION
+		{?actorRef rdfs:label  "John Malkovich"@en .} UNION
+		{?actorRef rdfs:label  "Clark Gable"@en .} UNION
+		{?actorRef rdfs:label  "Walter Matthau"@en .} UNION
+		{?actorRef rdfs:label  "James Garner"@en .} UNION
+		{?actorRef rdfs:label  "Ben Johnson"@en .} UNION
+		{?actorRef rdfs:label  "Peter Ustinov"@en .} UNION
+		{?actorRef rdfs:label  "Marisa Paredes"@en .} UNION
+		{?actorRef rdfs:label  "Nicolas Cage"@en .}
+
+		?film		wdt:P31			wd:Q11424 .
+		?film		rdfs:label		?filmLabel .
+		?film		wdt:P161		?actorRef .
+		?film		wdt:P161		?actor .
+		?actor		rdfs:label		?actorLabel .
+
+		FILTER (lang(?actorLabel) = 'en') .
+		FILTER (lang(?filmLabel) = 'en') .
+		SERVICE wikibase:label {bd:serviceParam wikibase:language 'en' .}
 }
-ORDER BY ?filmLabel ?actorLabel
+ORDER BY ?actorLabel ?filmLabel

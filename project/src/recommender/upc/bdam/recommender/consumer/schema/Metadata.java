@@ -1,5 +1,15 @@
 package upc.bdam.recommender.consumer.schema;
 
+
+/**
+ * 
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
 public class Metadata {
 
 	private long created;

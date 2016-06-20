@@ -1,19 +1,48 @@
 SELECT
-		(REPLACE(str(?band), "http://www.wikidata.org/entity/", "") as ?id)
-		(?bandLabel as ?name)
-		(year(?inception) as ?born)
+		DISTINCT
+		?id ?name ?released
  WHERE
 {
-		?band			wdt:P31			wd:Q215380 .
-		?band			rdfs:label		?bandLabel .
-  		?band			wdt:P136		?genre .
-		?genre			rdfs:label		?genreLabel .
-  		?band			wdt:P571		?inception .
-                        
-		FILTER(lang(?bandLabel)="en") .
-  		FILTER(lang(?genreLabel)="en") .
+		# Node of band
+		{
+		SELECT
+				(REPLACE(str(?band), 'http://www.wikidata.org/entity/', '') as ?id)
+				(?bandLabel as ?name)
+				(MIN(year(?inception)) as ?released)
+		 WHERE
+		{
+				?band			wdt:P31			wd:Q215380 .
+				?band			rdfs:label		?bandLabel .
+			OPTIONAL {
+				?band			wdt:P571		?inception .
+			}
+				FILTER(lang(?bandLabel) = 'en') .
+		}
+		GROUP BY ?band ?bandLabel
+		} UNION {
+		# Band who plays Songs
+		SELECT
+				(REPLACE(str(?performer), "http://www.wikidata.org/entity/", "") as ?id)
+				(?performerLabel as ?name)
+				(MIN(year(?inception)) as ?released)
+		 WHERE
+		{
+				?song			wdt:P31			wd:Q7366 .
+				?song			rdfs:label		?songLabel .
+				?song			wdt:P175		?performer .
+				?performer		rdfs:label		?performerLabel .
+			OPTIONAL {
+				?performer		wdt:P31			?instanceOf .
+				?instanceOf		rdfs:label		?instanceOfLabel .
+				FILTER(lang(?instanceOfLabel) = 'en') .                  
+			}
+			OPTIONAL {
+				?performer			wdt:P571		?inception .
+			}
+				FILTER(lang(?performerLabel)='en') .
+				FILTER NOT EXISTS {FILTER regex(?instanceOfLabel, 'human')} .
+		}
+		GROUP BY ?performer ?performerLabel
+		}
 }
-GROUP BY
-		?band ?bandLabel ?inception
-ORDER BY
-		?bandLabel
+ORDER BY ?name

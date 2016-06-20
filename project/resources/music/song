@@ -1,33 +1,15 @@
 SELECT
-		(REPLACE(str(?song), "http://www.wikidata.org/entity/", "") as ?id)
+		(REPLACE(str(?song), 'http://www.wikidata.org/entity/', '') as ?id)
 		(?songLabel as ?title)
-		?released
+		(MIN(str(year(?publicationDate))) as ?released)
  WHERE
 {
-		SELECT
-				DISTINCT
-				?song
-                ?songLabel
-                ?genreSongLabel
-                (if(!BOUND(?publicationDate), '3000', str(year(?publicationDate))) AS ?released)
-         WHERE
-        {
-                ?song			wdt:P31			wd:Q7366 .
-                ?song			rdfs:label		?songLabel .
-            OPTIONAL {
-                ?song			wdt:P136		?genreSong .
-                ?genreSong		rdfs:label		?genreSongLabel .
-                FILTER(lang(?genreSongLabel)="en") .
-            }
-            OPTIONAL {
-                ?song			wdt:P577		?publicationDate .
-            }
-
-                FILTER(lang(?songLabel)="en") .
-          		FILTER(lang(?genreSongLabel)="en") .
-
-        }
-		ORDER BY ?songLabel
+		?song			wdt:P31			wd:Q7366 .
+  		?song			rdfs:label		?songLabel .
+	OPTIONAL {
+        ?song			wdt:P577		?publicationDate .
+    }
+  		FILTER(lang(?songLabel) = 'en') .
 }
-GROUP BY ?song ?songLabel ?released
+GROUP BY ?song ?songLabel
 ORDER BY ?songLabel

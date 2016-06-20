@@ -1,0 +1,23 @@
+SELECT
+		DISTINCT
+		(REPLACE(str(?performer), "http://www.wikidata.org/entity/", "") as ?leftId)
+		(REPLACE(str(?song), "http://www.wikidata.org/entity/", "") as ?rightId)
+		(?performerLabel as ?leftName)
+		(?songLabel as ?rigthName)
+ WHERE
+{
+		?song			wdt:P31			wd:Q7366 .
+		?song			rdfs:label		?songLabel .
+		?song			wdt:P175		?performer .
+		?performer		rdfs:label		?performerLabel .
+	OPTIONAL {
+		?performer		wdt:P31			?instanceOf .
+		?instanceOf		rdfs:label		?instanceOfLabel .
+		FILTER(lang(?instanceOfLabel) = 'en') .                  
+	}
+
+		FILTER(lang(?performerLabel) = 'en') .
+		FILTER(lang(?songLabel) = 'en') .
+		FILTER NOT EXISTS {FILTER regex(?instanceOfLabel, 'human')} .
+}
+ORDER BY ?performerLabel ?songLabel

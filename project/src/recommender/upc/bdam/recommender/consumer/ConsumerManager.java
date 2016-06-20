@@ -1,9 +1,5 @@
 package upc.bdam.recommender.consumer;
 
-import upc.bdam.recommender.consumer.schema.SchemaAudioBean;
-import upc.bdam.recommender.consumer.schema.SchemaTextBean;
-import upc.bdam.recommender.consumer.schema.SchemaVideoBean;
-import upc.bdam.recommender.consumer.schema.SchemaWebBean;
 import upc.bdam.recommender.documentDDBB.dao.DocumentDataAccessManager;
 import upc.bdam.recommender.kafka.KafkaBean;
 

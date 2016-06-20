@@ -1,0 +1,60 @@
+SELECT
+		(replace(str(?genre), 'http://www.wikidata.org/entity/', '') as ?id)
+		(?genreLabel as ?name)
+ WHERE
+{
+		# Node Film		-> 402
+		{SELECT
+				?genre ?genreLabel
+		 WHERE
+		{
+				?film			wdt:P31			wd:Q11424 .
+				?film			wdt:P136		?genre .
+				?genre			rdfs:label		?genreLabel .
+				
+				FILTER (lang(?genreLabel) = 'en') .
+		}
+		GROUP BY ?genre ?genreLabel
+		} UNION {
+		# Node Band		-> 491
+		SELECT
+				?genre ?genreLabel
+		 WHERE
+		{
+				?band			wdt:P31			wd:Q215380 .
+				?band			wdt:P136		?genre .
+				?genre			rdfs:label		?genreLabel .
+
+				FILTER (lang(?genreLabel) = 'en') .
+		}
+		GROUP BY ?genre ?genreLabel
+		} UNION {
+		# Node Song		-> 180
+		SELECT
+				?genre ?genreLabel
+		 WHERE
+		{
+				?song			wdt:P31			wd:Q7366 .
+				?song			wdt:P136		?genre .
+				?genre			rdfs:label		?genreLabel .
+
+				FILTER (lang(?genreLabel) = 'en') .
+		}
+		GROUP BY ?genre ?genreLabel
+		} UNION {
+		# Node Book		-> 1127
+		SELECT
+				?genre ?genreLabel
+		 WHERE
+		{
+				?book			wdt:P31			wd:Q571 .
+				?book			wdt:P136		?genre .
+				?genre			rdfs:label		?genreLabel .
+
+				FILTER (lang(?genreLabel) = 'en') .
+		}
+		GROUP BY ?genre ?genreLabel
+		}
+}
+GROUP BY ?genre ?genreLabel
+ORDER BY ?genreLabel

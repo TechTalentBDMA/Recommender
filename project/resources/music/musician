@@ -1,37 +1,49 @@
 SELECT
-		(REPLACE(str(?memberOf), "http://www.wikidata.org/entity/", "")as ?id)
-		(?memberOfLabel as ?name)
-		(concat(str(day(?dateOfBirth)), "/", str(month(?dateOfBirth)), "/", str(year(?dateOfBirth))) as ?born)	
+		DISTINCT
+		?id ?name ?born
  WHERE
 {
-		{SELECT
-				?band
-         WHERE
-        {
-                ?band			wdt:P31			wd:Q215380 .
-                ?band			rdfs:label		?bandLabel .
-                ?band			wdt:P136		?genre .
-                ?genre			rdfs:label		?genreLabel .
-
-                FILTER(lang(?bandLabel) = 'en') .
-                FILTER(lang(?genreLabel) = 'en') .
-        }
-		GROUP BY
-				?band
+		# Node Member of band
+		{
+		SELECT
+				(REPLACE(str(?memberOf), 'http://www.wikidata.org/entity/', '')as ?id)
+				(?memberOfLabel as ?name)
+				(MIN(str(year(?dateOfBirth))) as ?born)	
+		 WHERE
+		{
+				?band			wdt:P31			wd:Q215380 .
+				?band			wdt:P527		?memberOf .
+				?memberOf		rdfs:label		?memberOfLabel .
+			OPTIONAL {
+				?memberOf		wdt:P569		?dateOfBirth .
+				}
+				FILTER (lang(?memberOfLabel)  =  'en') .
 		}
-		?band			wdt:P31			wd:Q215380 .
-		?band			rdfs:label		?bandLabel .
-  		?band			wdt:P527		?memberOf .
-		?memberOf		rdfs:label		?memberOfLabel .
-  		?memberOf		wdt:P569		?dateOfBirth .
-  		?memberOf		wdt:P106		?occupation .
-		?occupation		rdfs:label		?occupationLabel .
-
-  		FILTER (lang(?bandLabel) = 'en') .
-  		FILTER (lang(?memberOfLabel) = 'en') .
-  		FILTER (lang(?occupationLabel) = 'en') .
+		GROUP BY ?memberOf ?memberOfLabel
+		} UNION {
+		# Node Musician
+		SELECT
+				(REPLACE(str(?performer), 'http://www.wikidata.org/entity/', '') as ?id)
+				(?performerLabel as ?name)
+				(MIN(str(year(?dateOfBirth))) as ?born)
+		 WHERE
+		{
+				?song			wdt:P31			wd:Q7366 .
+				?song			wdt:P175		?performer .
+				?performer		rdfs:label		?performerLabel .
+			OPTIONAL {
+				?performer		wdt:P31			?instanceOf .
+				?instanceOf		rdfs:label		?instanceOfLabel .
+				FILTER(lang(?instanceOfLabel) = 'en') .                  
+			}
+			OPTIONAL {
+				?performer		wdt:P569		?dateOfBirth .
+			}
+				FILTER(lang(?performerLabel) = 'en') .
+				FILTER regex(?instanceOfLabel, 'human') .
+		}
+		GROUP BY ?performer ?performerLabel
+		}
 }
-GROUP BY
-		?memberOf ?memberOfLabel ?dateOfBirth
-ORDER BY
-		?memberOfLabel
+#GROUP BY ?id ?name ?born
+ORDER BY ?name
