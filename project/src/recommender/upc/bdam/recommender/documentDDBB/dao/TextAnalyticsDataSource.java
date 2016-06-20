@@ -16,6 +16,8 @@ import upc.bdam.recommender.consumer.schema.SchemaWebBean;
 
 
 public class TextAnalyticsDataSource {
+	public static final String TEXT_ANALYTICS_TIMESTAMP_BIG2="big2Timestamp";
+	public static final String TEXT_ANALYTICS_TIMESTAMP_ID="id";
 
 	private static String TEXT_ANALYTICS_TIMESTAMP = "timestamp";
 	private static String TEXT_ANALYTICS_FILE_TYPE = "fileType";

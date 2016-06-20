@@ -1,6 +1,7 @@
 package upc.bdam.recommender.wikiData;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,20 +33,7 @@ public class Recommender {
 		
 		
 		menu();
-		
-		try {
-			Thread mongoGuard =new Thread(new TextAnalyticsGraphGuard());
-			mongoGuard.start();
-			TextAnalyticsDataSource dataSource=new TextAnalyticsDataSource();
-			dataSource.hayNuevosDatos(123456);
-//			Runtime.getRuntime().exec("C:\\Program Files\\R\\R-3.2.5\\bin\\Rscript.exe C:\\dummy.R");
-//			Runtime.getRuntime().exec("C:\\Program Files\\R\\R-3.2.5\\bin\\Rscript.exe C:\\TextMining\\CodigoR\\TADocsV05.R");
-//			GraphDataAccessManager.getInstance().attach(new DocumentDDBBGraphObserver());
 
-			while (true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -132,7 +120,9 @@ public class Recommender {
 			salida += "* Que acción de las siguientes desea realizar:  *\n";
 			salida += "* 1- Carga Inicial de grafos                    *\n";
 			salida += "* 2- Consumir kafka                             *\n";
-			salida += "* 3- Salir                                      *\n";
+			salida += "* 3- analytics                                  *\n";
+			salida += "* 4- Actualizar graph database                  *\n";
+			salida += "* 5- Salir                                      *\n";
 			salida += "*************************************************\n";
 
 			System.out.println(salida);
@@ -151,11 +141,16 @@ public class Recommender {
 				continue;
 
 			} else if (opcion == 1)
-				cargaInicial();
-			else if (opcion == 3)
-				System.exit(0);
+				initialLoad();
 			else if (opcion == 2)
 				kafkaConsume();
+			else if (opcion == 3)
+				analytics();
+			else if (opcion == 4)
+				updateGraphFromBig2();
+			else if (opcion == 5)
+				System.exit(0);
+
 		} while (true);
 	}
 
@@ -163,7 +158,7 @@ public class Recommender {
 	 * Se cargan todos los datos iniciales tanto en neo4j como en mongoDB. El
 	 * repositorio utilizado para obtener los datos iniciales es wikidataa
 	 */
-	private static void cargaInicial() {
+	private static void initialLoad() {
 		try {
 			getBooks();
 			getFilms();
@@ -207,4 +202,29 @@ public class Recommender {
 
 	}
 
+	/**
+	 * Se realiza el textAnalytics del contenido almacenado en Big1, y se almacena en Big2 
+	 * @return
+	 */
+	private static void analytics(){
+		try {
+			Runtime.getRuntime().exec("C:\\Program Files\\R\\R-3.2.5\\bin\\Rscript.exe C:\\TextMining\\CodigoR\\TADocsV05.R");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Se revisa Big2 en busca de nuevos datos con los que actualizar la BBDD de conocimiento
+	 */
+	private static void updateGraphFromBig2(){		
+		try {
+			Thread mongoGuard =new Thread(new TextAnalyticsGraphGuard());
+			mongoGuard.start();
+			while (true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
