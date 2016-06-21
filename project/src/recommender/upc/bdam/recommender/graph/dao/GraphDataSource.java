@@ -18,15 +18,15 @@ import upc.bdam.recommender.config.PropertiesLoader;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.ArtWorkNodeSubType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.NodeType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonNodeSubType;
+import upc.bdam.recommender.kafka.KafkaBean;
 import upc.bdam.recommender.ontology.json.artwork.ArtWork;
 import upc.bdam.recommender.ontology.json.author.Author;
 import upc.bdam.recommender.ontology.json.band.Band;
 import upc.bdam.recommender.ontology.json.genre.Genre;
-import upc.bdam.recommender.ontology.json.relation.ArtWorkAuthorRelation;
 import upc.bdam.recommender.ontology.json.relation.LeftRightRelation;
 
 /**
- * 
+ * Clase de acceso a la BBDD de conocmiento
  * @author Grupo 9: 
  *           - Antolín Barrena Rico
  *           - Carles Castillejo
@@ -36,8 +36,10 @@ import upc.bdam.recommender.ontology.json.relation.LeftRightRelation;
  */
 public class GraphDataSource {
 
+	//declaración del nombre de la BBDD
 	static final String NEO4J_DDBB = "neo4JDB";
 
+	//acceso al fichero en el que se almacena la BBDD
 	File DB = new File(PropertiesLoader.getInstance().getProperty(NEO4J_DDBB));
 	GraphDatabaseService graph = null;
 	Transaction tx = null;
@@ -46,27 +48,43 @@ public class GraphDataSource {
 		init();
 	}
 
+	/**
+	 * Se abre la BBDD
+	 */
 	private void init() {
-			//FileUtils.deleteDirectory(DB);
-			//graph = new GraphDatabaseFactory().newEmbeddedDatabase(DB);
+		DB = new File(PropertiesLoader.getInstance().getProperty(NEO4J_DDBB));
+		graph=new GraphDatabaseFactory().newEmbeddedDatabase(DB);
 	}
 
+	/**
+	 * Inicio de transacción sobre la BBDD
+	 */
 	public void initTransaction() {
-		graph=new GraphDatabaseFactory().newEmbeddedDatabase(DB);
 		tx = graph.beginTx();
 	}
 
+	/**
+	 * Commit de la última acción realizada
+	 */
 	public void commit() {
 		tx.success();
 	}
 
+	/**
+	 * Cierre de la operación en curso
+	 */
 	public void closeTransaction() {
 		tx.close();
 		tx = null;
 		graph.shutdown();
 	}
 	
-
+	/**
+	 * Método para leer queries sobre la BBDD 
+	 * @param query
+	 * @return
+	 * @throws IOException
+	 */
 	public String readQuery(String query) throws IOException {
 		BufferedReader br = null;
 		String everything = new String();
@@ -85,15 +103,25 @@ public class GraphDataSource {
 		return everything;
 	}
 
+	/**
+	 * Inserción de nodos de tipo género
+	 * @param genre
+	 * @param type
+	 */
 	public void insertGenreNode(Genre genre, NodeType type) {
 
 		Node node = graph.createNode(type);
 
 		node.setProperty(GraphDataAccessObject.GENRE_NODE_ID, genre.getId().getValue());
 		node.setProperty(GraphDataAccessObject.GENRE_NODE_NAME, genre.getName().getValue());
-		//node.setProperty(Neo4JDataAccessObject.GENRE_NODE_NAME_NORM, genre.getNameNormalized().getValue());
 	}
 
+	/**
+	 * Inserción de nodo tipo persona
+	 * @param author
+	 * @param type
+	 * @param subtype
+	 */
 	public void insertPersonNode(Author author, NodeType type, PersonNodeSubType subtype) {
 
 		Node node = graph.createNode(type);
@@ -105,6 +133,11 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.NODE_SUB_TYPE,subtype.name());
 	}
 
+	/**
+	 * Inserción de nodos de tipo nodo
+	 * @param band
+	 * @param type
+	 */
 	public void insertBandNode(Band band, NodeType type) {
 
 		Node node = graph.createNode(type);
@@ -115,6 +148,12 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.NODE_TYPE, type);
 	}
 
+	/**
+	 * Inserción de nodos de tipo artWork
+	 * @param artWork
+	 * @param type
+	 * @param subtype
+	 */
 	public void insertArtWorkNode(ArtWork artWork, NodeType type, ArtWorkNodeSubType subtype ) {
 
 		Node node = graph.createNode(type);
@@ -126,34 +165,32 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.NODE_SUB_TYPE, subtype.name());
 	}
 
-/*	public void insertRelationAuthorBand(AuthorBandRelation relation, PersonRelationType relationType, NodeType personType, Label label ) {
+	/**
+	 * Inserción de nodos de tipo usuario
+	 * @param user
+	 * @param type
+	 */
+	public void insertUserNode(KafkaBean user, NodeType type) {
 
-		String authorQuery = "MATCH (c1:"+personType+") WHERE c1.id='" + relation.getAuthorId().getValue()
-				+ "' RETURN DISTINCT c1;";
-		String bandQuery = "MATCH (c1:"+label+") WHERE c1.id='" + relation.getBandId().getValue()
-				+ "' RETURN DISTINCT c1;";
-
-		NodeProxy authorNode = executeNeo4jQuery(authorQuery);
-		NodeProxy bandNode = executeNeo4jQuery(bandQuery);
-
-		if (authorNode != null && bandNode != null)
-			authorNode.createRelationshipTo(bandNode, relationType);
-	}*/
-
-/*	public void insertRelationBandArtWork(BandArtWorkRelation relation, PersonRelationType relationType, NodeType bandType, Label label ) {
-
-		String bandQuery = "MATCH (c1:"+bandType+") WHERE c1.id='" + relation.getBandId().getValue()
-				+ "' RETURN DISTINCT c1;";
-		String artWorkQuery = "MATCH (c1:"+label+") WHERE c1.id='" + relation.getArtWorkId().getValue()
-				+ "' RETURN DISTINCT c1;";
-
-		NodeProxy bandNode = executeNeo4jQuery(bandQuery);
-		NodeProxy artWorkNode = executeNeo4jQuery(artWorkQuery);
-
-		if (bandNode != null && artWorkNode != null)
-			bandNode.createRelationshipTo(artWorkNode, relationType);
-	}*/
+		Node node = graph.createNode(type);
+		
+		node.setProperty(GraphDataAccessObject.USER_DATA_NICK_NAME, user.getNickName());
+		node.setProperty(GraphDataAccessObject.USER_DATA_SURNAME, user.getSurname());
+		node.setProperty(GraphDataAccessObject.USER_DATA_NICK, user.getName());
+		node.setProperty(GraphDataAccessObject.USER_DATA_BORN, user.getBorn());
+		node.setProperty(GraphDataAccessObject.USER_DATA_SEX, user.getSex());
+		node.setProperty(GraphDataAccessObject.USER_DATA_PROFESSION, user.getProfession());
+		node.setProperty(GraphDataAccessObject.USER_DATA_HOBBY, user.getHobby());
+		node.setProperty(GraphDataAccessObject.USER_DATA_INTERESTED_IN, user.getInterestedIn());
+	}
 	
+	/**
+	 * Método para la inserción de relaciones entre nodos
+	 * @param relation
+	 * @param relationType
+	 * @param personType
+	 * @param label
+	 */
 	public void insertRelation(LeftRightRelation relation, RelationshipType relationType, NodeType personType, Label label) {
 
 		String authorQuery = "MATCH (c1:"+personType+") WHERE c1.id='" + relation.getLeftId().getValue()
@@ -168,20 +205,11 @@ public class GraphDataSource {
 			authorNode.createRelationshipTo(artWorkNode, relationType);
 	}
 
-/*	public void insertRelationArtWorkGenre(ArtWorkGenreRelation relation, GenreRelationType relationType, NodeType artWorkType, Label label ) {
-
-		String artWorkQuery = "MATCH (c1:"+artWorkType+") WHERE c1.id='" + relation.getArtWorkId().getValue()
-				+ "' RETURN DISTINCT c1;";
-		String genreQuery = "MATCH (c1:"+label+") WHERE c1.id='" + relation.getGenreId().getValue()
-				+ "' RETURN DISTINCT c1;";
-
-		NodeProxy artWorkNode = executeNeo4jQuery(artWorkQuery);
-		NodeProxy genreNode = executeNeo4jQuery(genreQuery);
-
-		if (artWorkNode != null && genreNode != null)
-			artWorkNode.createRelationshipTo(genreNode, relationType);
-	}*/
-
+	/**
+	 * Ejecución de consultas sobre la BBDD
+	 * @param query
+	 * @return
+	 */
 	private NodeProxy executeNeo4jQuery(String query) {
 		NodeProxy resultado = null;
 

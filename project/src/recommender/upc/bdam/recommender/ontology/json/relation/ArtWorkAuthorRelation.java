@@ -3,6 +3,15 @@ package upc.bdam.recommender.ontology.json.relation;
 import upc.bdam.recommender.ontology.json.GenericResult;
 import upc.bdam.recommender.ontology.json.IBinding;
 
+/**
+ * Clase en la que se encapsulan los valores obtenidos de wikidata para relaciones con artWork
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
 public class ArtWorkAuthorRelation implements IBinding {
 
 	public GenericResult artWorkTitle;

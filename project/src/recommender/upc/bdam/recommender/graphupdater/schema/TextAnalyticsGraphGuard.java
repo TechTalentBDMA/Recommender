@@ -10,7 +10,7 @@ import upc.bdam.recommender.config.PropertiesLoader;
 import upc.bdam.recommender.documentDDBB.dao.TextAnalyticsDataSource;
 
 /**
- * Clase encargada de velar 
+ * Clase encargada de velar por las actualizaciones que se realicen en Big2
  * @author Grupo 9: 
  *           - Antolín Barrena Rico
  *           - Carles Castillejo

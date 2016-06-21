@@ -14,7 +14,6 @@ public class SchemaTextBean extends TextAnalyticsSchema {
 
 	private String fileType;
 	private String content;
-	private Metadata metadata;
 	private int palabras;
 
 	public String getFileType() {
@@ -23,10 +22,6 @@ public class SchemaTextBean extends TextAnalyticsSchema {
 
 	public String getContent() {
 		return content;
-	}
-
-	public Metadata getMetadata() {
-		return metadata;
 	}
 
 	public int getPalabras() {
@@ -41,9 +36,6 @@ public class SchemaTextBean extends TextAnalyticsSchema {
 		this.content = content;
 	}
 
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
 
 	public void setPalabras(int palabras) {
 		this.palabras = palabras;

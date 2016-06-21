@@ -14,24 +14,16 @@ public class SchemaVideoBean extends TextAnalyticsSchema {
 
 	//declaración de variables
 	private String fileType;
-	private Metadata metadata;
 
 	//declaración de métodos getter
 	public String getFileType() {
 		return fileType;
 	}
 
-	public Metadata getMetadata() {
-		return metadata;
-	}
 
 	//declaración de setter
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
-	}
-
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
 	}
 
 }

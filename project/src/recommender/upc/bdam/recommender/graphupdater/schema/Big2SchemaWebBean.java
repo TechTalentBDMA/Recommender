@@ -1,7 +1,18 @@
 package upc.bdam.recommender.graphupdater.schema;
 
-public class GraphSchemaWebBean {
 
+/**
+ * Clase que define el esquema almacenado en Big2 para contenidos web
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
+public class Big2SchemaWebBean {
+
+	//declaración de variables
 	private String[] nombres;
 	private String[] temas;
 	private String[] claves;
@@ -10,6 +21,7 @@ public class GraphSchemaWebBean {
 	private String titulo;
 	private String descripcion;
 
+	//declaración de métodos getter
 	public String[] getNombres() {
 		return nombres;
 	}
@@ -38,6 +50,7 @@ public class GraphSchemaWebBean {
 		return descripcion;
 	}
 
+	//declaración de métodos setter
 	public void setNombres(String[] nombres) {
 		this.nombres = nombres;
 	}

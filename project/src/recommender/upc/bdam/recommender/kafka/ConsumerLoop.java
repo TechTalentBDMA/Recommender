@@ -1,8 +1,6 @@
 package upc.bdam.recommender.kafka;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -15,7 +13,6 @@ import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 
 import upc.bdam.recommender.config.PropertiesLoader;
 import upc.bdam.recommender.consumer.ConsumerManager;
-import upc.bdam.recommender.documentDDBB.dao.DocumentDataAccessManager;
 
 /**
  * Clase encargada de extraer los mensajes encolados en kafka. Recibe los mensajes e invoca las clases encargadas de 

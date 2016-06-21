@@ -16,6 +16,18 @@ public abstract class TextAnalyticsSchema {
 	private long timestamp;
 	private String userId;
 	private byte status;
+	private String metadata;
+	
+	
+	//campos de identificación 
+
+	public String getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
+	}
 
 	//declaración de métodos getter
 	public long getTimestamp() {

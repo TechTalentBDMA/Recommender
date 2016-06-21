@@ -1,7 +1,10 @@
 package upc.bdam.recommender.documentDDBB.dao;
 
 import upc.bdam.recommender.documentDDBB.dao.json.ArtWork;
+import upc.bdam.recommender.documentDDBB.dao.json.Band;
+import upc.bdam.recommender.documentDDBB.dao.json.Genre;
 import upc.bdam.recommender.documentDDBB.dao.json.Person;
+import upc.bdam.recommender.kafka.KafkaBean;
 import upc.bdam.recommender.ontology.json.IBinding;
 import upc.bdam.recommender.ontology.json.author.Author;
 
@@ -22,6 +25,9 @@ public class DocumentDataAccessObject {
 		//Nombre de las entidades de los modelos
 		public static final String PERSON="person";
 		public static final String ARTWORK="artwork";
+		public static final String BAND="band";
+		public static final String GENRE="genre";
+		public static final String USER="user";
 
 		/**
 		 * Inserción de los datos del usuario
@@ -57,7 +63,46 @@ public class DocumentDataAccessObject {
 				artwork.setReleased(graphArtWork.getReleased().getValue());			
 				artwork.setTitle(graphArtWork.getTitle().getValue());
 				
-				dataSource.insertCollectionArtWork(artwork);				
+				dataSource.insertArtWorkDocument(artwork);				
 			}
+		}
+		
+		/**
+		 * Inserción de los datos de una obra
+		 * @param values
+		 */
+		public void insertBandDocument(IBinding[] values) {
+			Band band;
+
+			for (IBinding value: values){
+				upc.bdam.recommender.ontology.json.band.Band group= (upc.bdam.recommender.ontology.json.band.Band) value;
+				band=new Band();
+				band.setReleased(group.getReleased().getValue());
+				band.setId(group.getId().getValue());
+				band.setName(group.getName().getValue());
+				
+				dataSource.insertBandDocument(band);				
+			}
+		}
+		
+		/**
+		 * Inserción de los datos de una obra
+		 * @param values
+		 */
+		public void insertGenreDocument(IBinding[] values) {
+			Genre genre;
+
+			for (IBinding value: values){
+				upc.bdam.recommender.ontology.json.genre.Genre oGenre= (upc.bdam.recommender.ontology.json.genre.Genre) value;
+				genre=new Genre();
+				genre.setId(oGenre.getId().getValue());
+				genre.setName(oGenre.getName().getValue());
+				
+				dataSource.insertGenreDocument(genre);				
+			}
+		}
+		
+		public void insertUser(KafkaBean value){
+			dataSource.insertUserDocument(value);
 		}
 }

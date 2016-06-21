@@ -24,6 +24,9 @@ public class DocumentDataAccessManager {
 	public static final byte DOCUMENT_SHEMA_WEB_INSERT = 4;
 	public static final byte DOCUMENT_SHEMA_AUDIO_INSERT = 5;
 	public static final byte DOCUMENT_SHEMA_VIDEO_INSERT = 6;
+	public static final byte DOCUMENT_BAND_INSERT = 7;
+	public static final byte DOCUMENT_GENRE_INSERT = 8;
+	public static final byte DOCUMENT_USER_INSERT = 9;
 
 	public static final byte DOCUMENT_PERSON_UPDATE = 31;
 	public static final byte DOCUMENT_ARTWORK_UPDATE = 32;
@@ -80,13 +83,26 @@ public class DocumentDataAccessManager {
 		case DOCUMENT_ARTWORK_INSERT:
 			insertArtWorkDocument(values);
 			break;
-
+		case DOCUMENT_GENRE_INSERT:
+			insertGenreDocument(values);
+			break;
+		case DOCUMENT_BAND_INSERT:
+			insertBandDocument(values);
+			break;
 		default:
 			break;
 		}
 	}
 
+	/**
+	 * Inserta en el esquema de text analytics la salida del análisis de la 
+	 * información de documentos de video recabada de los usuarios del recomendador
+	 * @param audio
+	 */
+	private void insertUser(KafkaBean value){
 	
+		documentAO.insertUser(value);
+	}
 	/**
 	 * Inserción de los esquemas de los documentos
 	 * @param query
@@ -107,6 +123,8 @@ public class DocumentDataAccessManager {
 		case DOCUMENT_SHEMA_VIDEO_INSERT:
 			consumeVideo(value);
 			break;
+		case DOCUMENT_USER_INSERT://ha esta inserción no se llega por consumer, se llega por réplica
+			insertUser(value);
 		default:
 			break;
 		}
@@ -122,6 +140,23 @@ public class DocumentDataAccessManager {
 	 */
 	private void insertPersonDocument(IBinding[] values) {
 		documentAO.insertPersonDocument(values);
+	}
+
+	/**
+	 * Inserta la nodos cuya información define nodos grupos musicales
+	 * @param values
+	 */
+	private void insertBandDocument(IBinding[] values) {
+		documentAO.insertBandDocument(values);
+	}
+	
+	/**
+	 * Inserta nodos de tipo genre, lo cual incluye directores, escritores
+	 * cantantes, etc.
+	 * @param values
+	 */
+	private void insertGenreDocument(IBinding[] values) {
+		documentAO.insertGenreDocument(values);
 	}
 
 	/**
@@ -149,8 +184,8 @@ public class DocumentDataAccessManager {
 		text.setContent(value.getContent());
 		text.setFileType(value.getMimeType());
 		text.setTimestamp(timestamp.getTime());
-		text.setUserId(value.getId());
-		//web.setMetadata(value.getMetadata());
+		text.setUserId(value.getNickName());
+		text.setMetadata(value.getMetadata());
 	
 		textAnalyticsAO.consumeText(text);
 	}
@@ -164,9 +199,9 @@ public class DocumentDataAccessManager {
 		Date timestamp=new Date();
 		SchemaWebBean web=new SchemaWebBean();
 		web.setContent(value.getContent());
-//		audio.setMetadata(value.getMetadata());
+		web.setMetadata(value.getMetadata());
 		web.setTimestamp(timestamp.getTime());
-		web.setUserId(value.getId());
+		web.setUserId(value.getNickName());
 		web.setUrl(value.getMetadata());
 		textAnalyticsAO.consumeWeb(web);
 	}
@@ -180,9 +215,9 @@ public class DocumentDataAccessManager {
 		Date timestamp=new Date();
 		SchemaAudioBean audio=new SchemaAudioBean();
 		audio.setFileType("");
-//		audio.setMetadata(value.getMetadata());
+		audio.setMetadata(value.getMetadata());
 		audio.setTimestamp(timestamp.getTime());
-		audio.setUserId(value.getId());
+		audio.setUserId(value.getNickName());
 		textAnalyticsAO.consumeAudio(audio);
 	}
 	
@@ -195,9 +230,9 @@ public class DocumentDataAccessManager {
 		Date timestamp=new Date();
 		SchemaVideoBean video=new SchemaVideoBean();
 		video.setFileType("");
-//		audio.setMetadata(value.getMetadata());
+		video.setMetadata(value.getMetadata());
 		video.setTimestamp(timestamp.getTime());
-		video.setUserId(value.getId());
+		video.setUserId(value.getNickName());
 		textAnalyticsAO.consumeVideo(video);
 	}
 	

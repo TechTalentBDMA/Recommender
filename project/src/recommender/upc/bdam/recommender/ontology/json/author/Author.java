@@ -3,6 +3,15 @@ package upc.bdam.recommender.ontology.json.author;
 import upc.bdam.recommender.ontology.json.GenericResult;
 import upc.bdam.recommender.ontology.json.IBinding;
 
+/**
+ * Clase en la que se encapsulan los valores obtenidos de wikidata para autores
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
 public class Author implements IBinding {
 
 	public GenericResult id=new GenericResult();

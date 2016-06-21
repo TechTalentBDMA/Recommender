@@ -1,5 +1,6 @@
 package upc.bdam.recommender.graphupdater.schema;
 
+
 public class TextAnalyticsGraphSchema {
 	
 	private long id;

@@ -14,25 +14,14 @@ public class SchemaAudioBean extends TextAnalyticsSchema {
 
 	//definición de variables
 	private String fileType;
-	private Metadata metadata;
 
 	//Métodos getter
 	public String getFileType() {
 		return fileType;
 	}
-
-	public Metadata getMetadata() {
-		return metadata;
-	}
-
 	
 	//métodos getter
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
 	}
-
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
-
 }

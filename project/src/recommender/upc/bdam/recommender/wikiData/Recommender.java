@@ -119,7 +119,7 @@ public class Recommender {
 				continue;
 			}
 
-			if (opcion < 0 || opcion > 3) {
+			if (opcion < 0 || opcion > 5) {
 				System.out.println("Opcion incorrecta. Elija de nuevo\n");
 				continue;
 
@@ -147,6 +147,9 @@ public class Recommender {
 			GraphDataAccessManager.getInstance().getBooks();
 			GraphDataAccessManager.getInstance().getFilms();
 			GraphDataAccessManager.getInstance().getSongs();
+			GraphDataAccessManager.getInstance().getBookRelations();;
+			GraphDataAccessManager.getInstance().getFilmsRelations();
+			GraphDataAccessManager.getInstance().getMusicRelations();			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

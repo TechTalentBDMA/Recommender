@@ -10,6 +10,7 @@ import upc.bdam.recommender.graph.dao.GraphDataAccessObject.GenreRelationType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.NodeType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonNodeSubType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonRelationType;
+import upc.bdam.recommender.kafka.KafkaBean;
 import upc.bdam.recommender.ontology.json.IBinding;
 import upc.bdam.recommender.wikiData.OntologyDataAccessObject;
 
@@ -226,6 +227,16 @@ public class GraphDataAccessManager {
 	}
 	
 	/**
+	 * Metodo mediante el cual se notifica a los observers de que se produce el evento que observan
+	 * @param values
+	 */
+	public void notifyAllObservers(KafkaBean values) {
+		for (GraphDDBBObserver observer : observers) {
+			observer.insertUser(values);
+		}
+	}
+	
+	/**
 	 * Obtienen los datos de canciones de wikidata y los inserta en la BBDD de
 	 * grafos.
 	 * 
@@ -236,10 +247,21 @@ public class GraphDataAccessManager {
 		IBinding[] value;
 		value=dao.getBands();
 		insert(GraphDataAccessManager.GRAPH_BAND_INSERT, value);
+		notifyAllObservers(value);
 		value=dao.getMusician();
 		insert(GraphDataAccessManager.GRAPH_MUSICIAN_INSERT, value);
+		notifyAllObservers(value);
 		value=dao.getSongs();
 		insert(GraphDataAccessManager.GRAPH_SONG_INSERT, value);
+		notifyAllObservers(value);
+	}
+	
+	/**
+	 * Inserta las relaciones del ámbito musical
+	 */
+	public void getMusicRelations()throws Exception{
+		OntologyDataAccessObject dao=new OntologyDataAccessObject();
+		IBinding[] value;
 		value=dao.getBandMemberRelation();
 		insert(GraphDataAccessManager.GRAPH_BAND_MEMBER_RELATION_INSERT, value);
 		value=dao.getSongBandRelation();
@@ -250,7 +272,6 @@ public class GraphDataAccessManager {
 		insert(GraphDataAccessManager.GRAPH_BAND_GENRE_RELATION_INSERT, value);
 		value=dao.getSongGenreRelation();
 		insert(GraphDataAccessManager.GRAPH_SONG_GENRE_RELATION_INSERT, value);
-		System.out.println(value.length);
 	}
 	
 	/**
@@ -264,15 +285,25 @@ public class GraphDataAccessManager {
 		IBinding[] value;
 		value=dao.getBooks();
 		insert(GraphDataAccessManager.GRAPH_BOOK_INSERT, value);
+		notifyAllObservers(value);
 		value=dao.getWriters();
 		insert(GraphDataAccessManager.GRAPH_WRITER_INSERT, value);
+		notifyAllObservers(value);
+
+	}
+	
+	/**
+	 * Inserta en BBDD las relaciones correspondientes a los books
+	 * @throws Exception
+	 */
+	public void getBookRelations() throws Exception{
+		OntologyDataAccessObject dao=new OntologyDataAccessObject();
+		IBinding[] value;
 		value=dao.getWriterBookRelation();
 		insert(GraphDataAccessManager.GRAPH_WRITER_BOOK_RELATION_INSERT, value);
 		value=dao.getBookGenreRelation();
 		insert(GraphDataAccessManager.GRAPH_BOOK_GENRE_RELATION_INSERT, value);
-		System.out.println(value.length);
 	}
-	
 	/**
 	 * Obtienen los datos de películas de wikidata y los inserta en la BBDD de
 	 * grafos.
@@ -284,15 +315,25 @@ public class GraphDataAccessManager {
 		IBinding[] value;
 		value=dao.getActors();
 		insert(GraphDataAccessManager.GRAPH_ACTOR_INSERT, value);
+		notifyAllObservers(value);
 		value=dao.getDirector();
 		insert(GraphDataAccessManager.GRAPH_DIRECTOR_INSERT, value);
+		notifyAllObservers(value);
 		value=dao.getFilms();
 		insert(GraphDataAccessManager.GRAPH_FILM_INSERT, value);
+		notifyAllObservers(value);
+	}
+	
+	/**
+	 * Se inserta en BBDD las relaciones correspondientes a los films
+	 */
+	public void getFilmsRelations()throws Exception{
+		OntologyDataAccessObject dao=new OntologyDataAccessObject();
+		IBinding[] value;
 		value=dao.getActorFilmRelation();
 		insert(GraphDataAccessManager.GRAPH_ACTOR_FILM_RELATION_INSERT, value);
 		value=dao.getDirectorFilmRelation();
 		insert(GraphDataAccessManager.GRAPH_DIRECTOR_FILM_RELATION_INSERT, value);
-		System.out.println(value.length);
 	}
 	
 	/**
@@ -304,6 +345,15 @@ public class GraphDataAccessManager {
 		IBinding[] value;
 		value=dao.getGenres();
 		insert(GraphDataAccessManager.GRAPH_GENRE_INSERT, value);
-		System.out.println(value.length);
+		notifyAllObservers(value);
+	}
+	
+	/**
+	 * Se inserta el usuario procedente del agente
+	 * @param value
+	 */
+	public void insertUserNode(KafkaBean value){
+		accessObject.insertUserNode(value);
+		notifyAllObservers(value);
 	}
 }

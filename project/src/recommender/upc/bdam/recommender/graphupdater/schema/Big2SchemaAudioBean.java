@@ -1,7 +1,17 @@
 package upc.bdam.recommender.graphupdater.schema;
 
-public class GraphSchemaAudioBean {
-
+/**
+ * Clase que define el esquema almacenado en Big2 para contenidos de audio
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
+public class Big2SchemaAudioBean {
+	
+	//declaración de variables
 	private String titulo;
 	private String album;
 	private byte clasificacion;
@@ -11,6 +21,7 @@ public class GraphSchemaAudioBean {
 	private String[] generos;
 	private String compositores;
 
+	//declaración de métodos getter
 	public String getTitulo() {
 		return titulo;
 	}
@@ -43,6 +54,7 @@ public class GraphSchemaAudioBean {
 		return compositores;
 	}
 
+	//declaración de métodos setter
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}

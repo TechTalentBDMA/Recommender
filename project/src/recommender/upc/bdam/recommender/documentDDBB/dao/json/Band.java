@@ -1,6 +1,5 @@
-package upc.bdam.recommender.ontology.json.band;
+package upc.bdam.recommender.documentDDBB.dao.json;
 
-import upc.bdam.recommender.ontology.json.GenericResult;
 import upc.bdam.recommender.ontology.json.IBinding;
 
 /**
@@ -14,32 +13,27 @@ import upc.bdam.recommender.ontology.json.IBinding;
  */
 public class Band implements IBinding {
 
-	public GenericResult id=new GenericResult();
-	public GenericResult released=new GenericResult();
-	public GenericResult name=new GenericResult();
-
-	public GenericResult getId() {
+	public String id=new String();
+	public String released=new String();
+	public String name=new String();
+	public String getId() {
 		return id;
 	}
-
-	public GenericResult getReleased() {
+	public String getReleased() {
 		return released;
 	}
-
-	public GenericResult getName() {
+	public String getName() {
 		return name;
 	}
-
-	public void setId(GenericResult id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-
-	public void setReleased(GenericResult released) {
+	public void setReleased(String released) {
 		this.released = released;
 	}
-
-	public void setName(GenericResult name) {
+	public void setName(String name) {
 		this.name = name;
 	}
+
 
 }

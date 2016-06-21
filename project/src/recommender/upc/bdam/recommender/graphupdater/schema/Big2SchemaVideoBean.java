@@ -1,6 +1,17 @@
 package upc.bdam.recommender.graphupdater.schema;
 
-public class GraphSchemaVideoBean {
+/**
+ * Clase que define el esquema almacenado en Big2 para contenidos de video
+ * @author Grupo 9: 
+ *           - Antolín Barrena Rico
+ *           - Carles Castillejo
+ *           - Raffaele Ghermandi
+ *           - David Pérez Rodríguez
+ *
+ */
+public class Big2SchemaVideoBean {
+	
+	//declaración de variables
 	private String titulo;
 	private String[] actores;
 	private String director;
@@ -8,6 +19,8 @@ public class GraphSchemaVideoBean {
 	private String guionista;
 	private int clasificacion;
 	private int year;
+	
+	//declaración de métodos setter
 	private String[] generos;
 
 	public String getTitulo() {
@@ -42,6 +55,7 @@ public class GraphSchemaVideoBean {
 		return generos;
 	}
 
+	//declaración de métodos setter
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}
