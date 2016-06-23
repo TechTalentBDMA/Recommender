@@ -10,6 +10,11 @@ import upc.bdam.recommender.graph.dao.GraphDataAccessObject.GenreRelationType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.NodeType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonNodeSubType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonRelationType;
+import upc.bdam.recommender.graphupdater.schema.Big2AudioSchemaBean;
+import upc.bdam.recommender.graphupdater.schema.Big2SGraphGuardSchema;
+import upc.bdam.recommender.graphupdater.schema.Big2TextSchemaBean;
+import upc.bdam.recommender.graphupdater.schema.Big2VideoSchemaBean;
+import upc.bdam.recommender.graphupdater.schema.Big2WebSchemaBean;
 import upc.bdam.recommender.kafka.KafkaBean;
 import upc.bdam.recommender.ontology.json.IBinding;
 import upc.bdam.recommender.wikiData.OntologyDataAccessObject;
@@ -237,6 +242,16 @@ public class GraphDataAccessManager {
 	}
 	
 	/**
+	 * Metodo mediante el cual se notifica a los observers de que se produce el evento que observan
+	 * @param values
+	 */
+	public void notifyAllObservers(Big2SGraphGuardSchema values) {
+		for (GraphDDBBObserver observer : observers) {
+			observer.insertBig2Schema(values);
+		}
+	}
+	
+	/**
 	 * Obtienen los datos de canciones de wikidata y los inserta en la BBDD de
 	 * grafos.
 	 * 
@@ -355,5 +370,22 @@ public class GraphDataAccessManager {
 	public void insertUserNode(KafkaBean value){
 		accessObject.insertUserNode(value);
 		notifyAllObservers(value);
+	}
+	
+	/**
+	 * Identific el tipo de documento procedente de Big2 que hay que insertar en la BBDD de conocimiento
+	 * @param value
+	 */
+	public void insertBig2Node(Big2SGraphGuardSchema value){
+		if (value instanceof Big2TextSchemaBean)
+			accessObject.insertBig2TextNode((Big2TextSchemaBean)value);
+		else if (value instanceof Big2VideoSchemaBean)
+			accessObject.insertBig2VideoNode((Big2VideoSchemaBean)value);
+		else if (value instanceof Big2AudioSchemaBean)
+			accessObject.insertBig2AudioNode((Big2AudioSchemaBean)value);
+		else if (value instanceof Big2WebSchemaBean)
+			accessObject.insertBig2WebNode((Big2WebSchemaBean)value);
+
+		notifyAllObservers(value);		
 	}
 }

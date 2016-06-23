@@ -9,9 +9,14 @@ package upc.bdam.recommender.graphupdater.schema;
  *           - David Pérez Rodríguez
  *
  */
-public class Big2SchemaTextBean {
+public class Big2TextSchemaBean  extends Big2SGraphGuardSchema{
 
 	//declaración de variables
+	private String nombres;
+	private String temas;
+	private String claves;
+	private String generos;
+	private String palabras;
 	private String titulo;
 	private String autor;
 	private String idioma;
@@ -19,11 +24,32 @@ public class Big2SchemaTextBean {
 	private String creator;
 	private int year;
 	private String subject;
-	private byte type;
+	private String type;
 
 	//declaración de métodos getter
+	
 	public String getTitulo() {
 		return titulo;
+	}
+
+	public String getNombres() {
+		return nombres;
+	}
+
+	public String getTemas() {
+		return temas;
+	}
+
+	public String getClaves() {
+		return claves;
+	}
+
+	public String getGeneros() {
+		return generos;
+	}
+
+	public String getPalabras() {
+		return palabras;
 	}
 
 	public String getAutor() {
@@ -50,11 +76,31 @@ public class Big2SchemaTextBean {
 		return subject;
 	}
 
-	public byte getType() {
+	public String getType() {
 		return type;
 	}
 
 	//declaración de métodos setter
+	public void setNombres(String nombres) {
+		this.nombres = nombres;
+	}
+
+	public void setTemas(String temas) {
+		this.temas = temas;
+	}
+
+	public void setClaves(String claves) {
+		this.claves = claves;
+	}
+
+	public void setGeneros(String generos) {
+		this.generos = generos;
+	}
+
+	public void setPalabras(String palabras) {
+		this.palabras = palabras;
+	}
+	
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}
@@ -83,7 +129,7 @@ public class Big2SchemaTextBean {
 		this.subject = subject;
 	}
 
-	public void setType(byte type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 

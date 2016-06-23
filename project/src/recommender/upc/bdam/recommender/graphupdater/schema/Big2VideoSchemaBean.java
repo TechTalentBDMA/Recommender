@@ -9,11 +9,11 @@ package upc.bdam.recommender.graphupdater.schema;
  *           - David Pérez Rodríguez
  *
  */
-public class Big2SchemaVideoBean {
+public class Big2VideoSchemaBean  extends Big2SGraphGuardSchema{
 	
 	//declaración de variables
 	private String titulo;
-	private String[] actores;
+	private String actores;
 	private String director;
 	private String productor;
 	private String guionista;
@@ -21,13 +21,13 @@ public class Big2SchemaVideoBean {
 	private int year;
 	
 	//declaración de métodos setter
-	private String[] generos;
+	private String generos;
 
 	public String getTitulo() {
 		return titulo;
 	}
 
-	public String[] getActores() {
+	public String getActores() {
 		return actores;
 	}
 
@@ -51,7 +51,7 @@ public class Big2SchemaVideoBean {
 		return year;
 	}
 
-	public String[] getGeneros() {
+	public String getGeneros() {
 		return generos;
 	}
 
@@ -60,7 +60,7 @@ public class Big2SchemaVideoBean {
 		this.titulo = titulo;
 	}
 
-	public void setActores(String[] actores) {
+	public void setActores(String actores) {
 		this.actores = actores;
 	}
 
@@ -84,7 +84,7 @@ public class Big2SchemaVideoBean {
 		this.year = year;
 	}
 
-	public void setGeneros(String[] generos) {
+	public void setGeneros(String generos) {
 		this.generos = generos;
 	}
 

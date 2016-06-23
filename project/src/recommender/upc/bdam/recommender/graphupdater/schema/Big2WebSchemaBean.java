@@ -10,31 +10,31 @@ package upc.bdam.recommender.graphupdater.schema;
  *           - David Pérez Rodríguez
  *
  */
-public class Big2SchemaWebBean {
+public class Big2WebSchemaBean  extends Big2SGraphGuardSchema{
 
 	//declaración de variables
-	private String[] nombres;
-	private String[] temas;
-	private String[] claves;
-	private String[] generos;
+	private String nombres;
+	private String temas;
+	private String claves;
+	private String generos;
 	private String uri;
 	private String titulo;
 	private String descripcion;
 
 	//declaración de métodos getter
-	public String[] getNombres() {
+	public String getNombres() {
 		return nombres;
 	}
 
-	public String[] getTemas() {
+	public String getTemas() {
 		return temas;
 	}
 
-	public String[] getClaves() {
+	public String getClaves() {
 		return claves;
 	}
 
-	public String[] getGeneros() {
+	public String getGeneros() {
 		return generos;
 	}
 
@@ -51,19 +51,19 @@ public class Big2SchemaWebBean {
 	}
 
 	//declaración de métodos setter
-	public void setNombres(String[] nombres) {
+	public void setNombres(String nombres) {
 		this.nombres = nombres;
 	}
 
-	public void setTemas(String[] temas) {
+	public void setTemas(String temas) {
 		this.temas = temas;
 	}
 
-	public void setClaves(String[] claves) {
+	public void setClaves(String claves) {
 		this.claves = claves;
 	}
 
-	public void setGeneros(String[] generos) {
+	public void setGeneros(String generos) {
 		this.generos = generos;
 	}
 

@@ -1,5 +1,6 @@
 package upc.bdam.recommender.graph.dao;
 
+import upc.bdam.recommender.graphupdater.schema.Big2SGraphGuardSchema;
 import upc.bdam.recommender.kafka.KafkaBean;
 import upc.bdam.recommender.ontology.json.IBinding;
 
@@ -12,30 +13,36 @@ import upc.bdam.recommender.ontology.json.IBinding;
  *           - David Pérez Rodríguez
  *
  */
-public abstract class GraphDDBBObserver {
+public interface GraphDDBBObserver {
 
 	/**
 	 * Observer para inserciones
 	 * @param values
 	 */
-	public abstract void insert(IBinding[] values);
+	public  void insert(IBinding[] values);
 	
 	/**
 	 * Observer para inserciones
 	 * @param values
 	 */
-	public abstract void insertUser(KafkaBean values);
+	public  void insertUser(KafkaBean values);
+	
+	/**
+	 * Método que observa las inserciones en el modelo procedentes de Big2
+	 * @param big2Schema
+	 */
+	public void insertBig2Schema(Big2SGraphGuardSchema big2Schema);
 
 	/**
 	 * Observer para actualizaciones
 	 * @param values
 	 */
-	public abstract void update(IBinding[] values);
+	public  void update(IBinding[] values);
 
 	/**
 	 * Observer para borrados
 	 * @param values
 	 */
-	public abstract void delete(IBinding[] values);
+	public  void delete(IBinding[] values);
 
 }

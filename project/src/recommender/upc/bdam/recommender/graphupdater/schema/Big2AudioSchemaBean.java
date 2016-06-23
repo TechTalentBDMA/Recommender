@@ -9,16 +9,16 @@ package upc.bdam.recommender.graphupdater.schema;
  *           - David Pérez Rodríguez
  *
  */
-public class Big2SchemaAudioBean {
+public class Big2AudioSchemaBean extends Big2SGraphGuardSchema{
 	
 	//declaración de variables
 	private String titulo;
 	private String album;
-	private byte clasificacion;
+	private int clasificacion;
 	private String interprete;
-	private String[] colanboradores;
+	private String colaboradores;
 	private int year;
-	private String[] generos;
+	private String generos;
 	private String compositores;
 
 	//declaración de métodos getter
@@ -30,7 +30,7 @@ public class Big2SchemaAudioBean {
 		return album;
 	}
 
-	public byte getClasificacion() {
+	public int getClasificacion() {
 		return clasificacion;
 	}
 
@@ -38,15 +38,15 @@ public class Big2SchemaAudioBean {
 		return interprete;
 	}
 
-	public String[] getColanboradores() {
-		return colanboradores;
+	public String getColaboradores() {
+		return colaboradores;
 	}
 
 	public int getYear() {
 		return year;
 	}
 
-	public String[] getGeneros() {
+	public String getGeneros() {
 		return generos;
 	}
 
@@ -63,7 +63,7 @@ public class Big2SchemaAudioBean {
 		this.album = album;
 	}
 
-	public void setClasificacion(byte clasificacion) {
+	public void setClasificacion(int clasificacion) {
 		this.clasificacion = clasificacion;
 	}
 
@@ -71,15 +71,15 @@ public class Big2SchemaAudioBean {
 		this.interprete = interprete;
 	}
 
-	public void setColanboradores(String[] colanboradores) {
-		this.colanboradores = colanboradores;
+	public void setColaboradores(String colaboradores) {
+		this.colaboradores = colaboradores;
 	}
 
 	public void setYear(int year) {
 		this.year = year;
 	}
 
-	public void setGeneros(String[] generos) {
+	public void setGeneros(String generos) {
 		this.generos = generos;
 	}
 

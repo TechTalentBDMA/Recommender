@@ -3,6 +3,7 @@ package upc.bdam.recommender.documentDDBB.dao;
 import upc.bdam.recommender.documentDDBB.dao.json.Band;
 import upc.bdam.recommender.documentDDBB.dao.json.Genre;
 import upc.bdam.recommender.graph.dao.GraphDDBBObserver;
+import upc.bdam.recommender.graphupdater.schema.Big2SGraphGuardSchema;
 import upc.bdam.recommender.kafka.KafkaBean;
 import upc.bdam.recommender.ontology.json.IBinding;
 import upc.bdam.recommender.ontology.json.author.Author;
@@ -16,7 +17,7 @@ import upc.bdam.recommender.ontology.json.author.Author;
  *         Ghermandi - David Pérez Rodríguez
  *
  */
-public class DocumentDDBBGraphObserver extends GraphDDBBObserver {
+public class ReplicaDDBBGraphObserver implements GraphDDBBObserver {
 
 	/**
 	 * Se inserta en la BBBDD de persistencia los valores de persona y obra
@@ -24,14 +25,14 @@ public class DocumentDDBBGraphObserver extends GraphDDBBObserver {
 	public void insert(IBinding[] values) {
 		try {
 			if (values[0] instanceof Author)
-				DocumentDataAccessManager.getInstance().insert(DocumentDataAccessManager.DOCUMENT_PERSON_INSERT,
+				ReplicaDataAccessManager.getInstance().insert(ReplicaDataAccessManager.DOCUMENT_PERSON_INSERT,
 						values);
 			else if (values[0] instanceof Band)
-				DocumentDataAccessManager.getInstance().insert(DocumentDataAccessManager.DOCUMENT_BAND_INSERT, values);
+				ReplicaDataAccessManager.getInstance().insert(ReplicaDataAccessManager.DOCUMENT_BAND_INSERT, values);
 			else if (values[0] instanceof Genre)
-				DocumentDataAccessManager.getInstance().insert(DocumentDataAccessManager.DOCUMENT_GENRE_INSERT, values);
+				ReplicaDataAccessManager.getInstance().insert(ReplicaDataAccessManager.DOCUMENT_GENRE_INSERT, values);
 			else
-				DocumentDataAccessManager.getInstance().insert(DocumentDataAccessManager.DOCUMENT_ARTWORK_INSERT,
+				ReplicaDataAccessManager.getInstance().insert(ReplicaDataAccessManager.DOCUMENT_ARTWORK_INSERT,
 						values);
 
 		} catch (Exception e) {
@@ -46,22 +47,25 @@ public class DocumentDDBBGraphObserver extends GraphDDBBObserver {
 	 */
 	public void insertUser(KafkaBean values) {
 		try {
-			DocumentDataAccessManager.getInstance().insert(DocumentDataAccessManager.DOCUMENT_PERSON_INSERT, values);
-
+			ReplicaDataAccessManager.getInstance().updateModel(values);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
+	
+	public void insertBig2Schema(Big2SGraphGuardSchema big2Schema){
+		ReplicaDataAccessManager.getInstance().updateModel(big2Schema);
+	}
 
-	@Override
+	
+	
 	public void update(IBinding[] values) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void delete(IBinding[] values) {
 		// TODO Auto-generated method stub
 

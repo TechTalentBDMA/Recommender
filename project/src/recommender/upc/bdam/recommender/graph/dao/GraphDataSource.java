@@ -18,6 +18,11 @@ import upc.bdam.recommender.config.PropertiesLoader;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.ArtWorkNodeSubType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.NodeType;
 import upc.bdam.recommender.graph.dao.GraphDataAccessObject.PersonNodeSubType;
+import upc.bdam.recommender.graph.dao.GraphDataAccessObject.TextAnalytics;
+import upc.bdam.recommender.graphupdater.schema.Big2AudioSchemaBean;
+import upc.bdam.recommender.graphupdater.schema.Big2TextSchemaBean;
+import upc.bdam.recommender.graphupdater.schema.Big2VideoSchemaBean;
+import upc.bdam.recommender.graphupdater.schema.Big2WebSchemaBean;
 import upc.bdam.recommender.kafka.KafkaBean;
 import upc.bdam.recommender.ontology.json.artwork.ArtWork;
 import upc.bdam.recommender.ontology.json.author.Author;
@@ -219,6 +224,89 @@ public class GraphDataSource {
 			resultado = (NodeProxy) aux.get("c1");
 		}
 		return resultado;
+
+	}
+	
+	
+	public void insertBig2Text(Big2TextSchemaBean value, TextAnalytics type){
+		Node node = graph.createNode(type);
+		
+		node.setProperty(GraphDataAccessObject.BIG2_AUTOR, value.getAutor());
+		node.setProperty(GraphDataAccessObject.BIG2_TIMESTAMP, value.getId());
+		node.setProperty(GraphDataAccessObject.BIG2_CLAVES, value.getClaves());
+		node.setProperty(GraphDataAccessObject.BIG2_CREATOR, value.getCreator());
+		node.setProperty(GraphDataAccessObject.BIG2_GENEROS, value.getGeneros());
+		node.setProperty(GraphDataAccessObject.BIG2_IDIOMA, value.getIdioma());
+		node.setProperty(GraphDataAccessObject.BIG2_PALABRAS, value.getPalabras());
+		node.setProperty(GraphDataAccessObject.BIG2_SUBJECT, value.getSubject());		
+		node.setProperty(GraphDataAccessObject.BIG2_ISBN, value.getIsbn());
+		node.setProperty(GraphDataAccessObject.BIG2_TEMAS, value.getTemas());
+		node.setProperty(GraphDataAccessObject.BIG2_NOMBRES, value.getNombres());
+		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());
+		node.setProperty(GraphDataAccessObject.BIG2_TYPE, value.getType());
+		node.setProperty(GraphDataAccessObject.BIG2_USER_ID, value.getUserId());
+		node.setProperty(GraphDataAccessObject.BIG2_YEAR, value.getYear());
+	}
+	
+	/**
+	 * Se insertan los nodos de audio en la BBDD de conocimiento
+	 * @param value
+	 */
+	public void insertBig2Audio(Big2AudioSchemaBean value, TextAnalytics type){
+
+		Node node = graph.createNode(type);
+		
+		node.setProperty(GraphDataAccessObject.BIG2_ALBUM, value.getAlbum());
+		node.setProperty(GraphDataAccessObject.BIG2_CLASIFICACION, value.getClasificacion());
+		node.setProperty(GraphDataAccessObject.BIG2_COLABORADORES, value.getColaboradores());
+		node.setProperty(GraphDataAccessObject.BIG2_COMPOSITORES, value.getCompositores());
+		node.setProperty(GraphDataAccessObject.BIG2_GENEROS, value.getGeneros());
+		node.setProperty(GraphDataAccessObject.BIG2_TIMESTAMP, value.getId());
+		node.setProperty(GraphDataAccessObject.BIG2_INTERPRETE, value.getInterprete());
+		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());		
+		node.setProperty(GraphDataAccessObject.BIG2_USER_ID, value.getUserId());
+		node.setProperty(GraphDataAccessObject.BIG2_YEAR, value.getYear());
+	}
+
+	/**
+	 * Se insertan los nodos de video en la BBDD de conocimiento
+	 * @param value
+	 */
+	public void insertBig2Video(Big2VideoSchemaBean value, TextAnalytics type){
+
+		Node node = graph.createNode(type);
+		
+		node.setProperty(GraphDataAccessObject.BIG2_ACTORES, value.getActores());
+		node.setProperty(GraphDataAccessObject.BIG2_TIMESTAMP, value.getId());
+		node.setProperty(GraphDataAccessObject.BIG2_CLASIFICACION, value.getClasificacion());
+		node.setProperty(GraphDataAccessObject.BIG2_DIRECCION, value.getDirector());
+		node.setProperty(GraphDataAccessObject.BIG2_GENEROS, value.getGeneros());
+		node.setProperty(GraphDataAccessObject.BIG2_GUIONISTA, value.getGuionista());
+		node.setProperty(GraphDataAccessObject.BIG2_PRODUCTOR, value.getProductor());
+		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());		
+		node.setProperty(GraphDataAccessObject.BIG2_USER_ID, value.getUserId());
+		node.setProperty(GraphDataAccessObject.BIG2_YEAR, value.getYear());
+
+	
+	}
+	
+	/**
+	 * Se insertan los nodos web en la BBDD de conocimiento
+	 * @param value
+	 */
+	public void insertBig2Web(Big2WebSchemaBean value, TextAnalytics type){
+
+		Node node = graph.createNode(type);
+		
+		node.setProperty(GraphDataAccessObject.BIG2_CLAVES, value.getClaves());
+		node.setProperty(GraphDataAccessObject.BIG2_DESCRIPCION, value.getDescripcion());
+		node.setProperty(GraphDataAccessObject.BIG2_GENEROS, value.getGeneros());
+		node.setProperty(GraphDataAccessObject.BIG2_TIMESTAMP, value.getId());
+		node.setProperty(GraphDataAccessObject.BIG2_NOMBRES, value.getNombres());
+		node.setProperty(GraphDataAccessObject.BIG2_TEMAS, value.getTemas());
+		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());
+		node.setProperty(GraphDataAccessObject.BIG2_URL, value.getUri());		
+		node.setProperty(GraphDataAccessObject.BIG2_USER_ID, value.getUserId());
 
 	}
 }

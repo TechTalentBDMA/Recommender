@@ -1,4 +1,4 @@
-	package upc.bdam.recommender.documentDDBB.dao;
+	package upc.bdam.recommender.Big1DDBB.dao;
 
 import java.util.Date;
 
@@ -7,7 +7,6 @@ import upc.bdam.recommender.consumer.schema.SchemaTextBean;
 import upc.bdam.recommender.consumer.schema.SchemaVideoBean;
 import upc.bdam.recommender.consumer.schema.SchemaWebBean;
 import upc.bdam.recommender.kafka.KafkaBean;
-import upc.bdam.recommender.ontology.json.IBinding;
 
 /**
  * Clase que gestiona la inserción en el Mongo de persistencia.
@@ -15,7 +14,7 @@ import upc.bdam.recommender.ontology.json.IBinding;
  * 
  *
  */
-public class DocumentDataAccessManager {
+public class Big1AccessManager {
 
 	//Se definen constantes para accesos de inserción, actualización y borrado en la base de datos ontológica
 	public static final byte DOCUMENT_PERSON_INSERT = 1;
@@ -43,132 +42,51 @@ public class DocumentDataAccessManager {
 	public static final byte DOCUMENT_SHEMA_VIDEO_DELETE = 76;
 
 	//declaración de las variables de clase
-	private static DocumentDataAccessManager instance = null;
-	
-	//Acceso a la BBDD de persistencia
-	private DocumentDataAccessObject documentAO = new DocumentDataAccessObject();
+	private static Big1AccessManager instance = null;
 	
 	//Acceso a Big2
-	private TextAnalyticsDocumentAccesObject textAnalyticsAO =new TextAnalyticsDocumentAccesObject();
+	private Big1DocumentAccessObject Big1AO =new Big1DocumentAccessObject();
 	
 	/**
 	 * Declaración del constructor. Privado para la implementación del patrón singleton
 	 */
-	private DocumentDataAccessManager() {}
+	private Big1AccessManager() {}
 
 	/**
 	 * Métod estático para el acceso a la única instancia de la clase
 	 * @return
 	 */
-	public static final DocumentDataAccessManager getInstance() {
+	public static final Big1AccessManager getInstance() {
 		if (instance != null)
 			return instance;
 		else {
-			instance = new DocumentDataAccessManager();
+			instance = new Big1AccessManager();
 			return instance;
 		}
 	}
 
 	/**
-	 * Inserta información en la BBDD de ontologías.
-	 * @param query
-	 * @param values
-	 * @throws Exception
+	 * Se identifica el tipo de documento que se va a consumir
+	 * @param bean
 	 */
-	public void insert(byte query, IBinding[] values) throws Exception {
-		switch (query) {
-		case DOCUMENT_PERSON_INSERT:
-			insertPersonDocument(values);
+	public void consume(KafkaBean bean){
+		byte tipo=bean.getType();
+		switch(tipo){
+		case KafkaBean.KAFKA_AUDIO:
+			consumeAudio(bean);
 			break;
-		case DOCUMENT_ARTWORK_INSERT:
-			insertArtWorkDocument(values);
+		case KafkaBean.KAFKA_TEXTO:
+			consumeText(bean);
 			break;
-		case DOCUMENT_GENRE_INSERT:
-			insertGenreDocument(values);
+		case KafkaBean.KAFKA_VIDEO:
+			consumeVideo(bean);
 			break;
-		case DOCUMENT_BAND_INSERT:
-			insertBandDocument(values);
-			break;
-		default:
+		case KafkaBean.KAFKA_WEB:
+			consumeWeb(bean);
 			break;
 		}
 	}
 
-	/**
-	 * Inserta en el esquema de text analytics la salida del análisis de la 
-	 * información de documentos de video recabada de los usuarios del recomendador
-	 * @param audio
-	 */
-	private void insertUser(KafkaBean value){
-	
-		documentAO.insertUser(value);
-	}
-	/**
-	 * Inserción de los esquemas de los documentos
-	 * @param query
-	 * @param value
-	 * @throws Exception
-	 */
-	public void insert(byte query, KafkaBean value) throws Exception {
-		switch (query) {
-		case DOCUMENT_SHEMA_TEXT_INSERT:
-			consumeText(value);
-			break;
-		case DOCUMENT_SHEMA_WEB_INSERT:
-			consumeWeb(value);
-			break;
-		case DOCUMENT_SHEMA_AUDIO_INSERT:
-			consumeVideo(value);
-			break;
-		case DOCUMENT_SHEMA_VIDEO_INSERT:
-			consumeVideo(value);
-			break;
-		case DOCUMENT_USER_INSERT://ha esta inserción no se llega por consumer, se llega por réplica
-			insertUser(value);
-		default:
-			break;
-		}
-	}
-	//////////////////////////////////////////////////////////////////////
-	//  INSERCIÓN DE LA INFORMACIÓN INSERTADA EN LA BBDD DE ONTOLOGIAS  //  
-	//////////////////////////////////////////////////////////////////////
-	
-	/**
-	 * Inserta nodos de tipo persona, lo cual incluye directores, escritores
-	 * cantantes, etc.
-	 * @param values
-	 */
-	private void insertPersonDocument(IBinding[] values) {
-		documentAO.insertPersonDocument(values);
-	}
-
-	/**
-	 * Inserta la nodos cuya información define nodos grupos musicales
-	 * @param values
-	 */
-	private void insertBandDocument(IBinding[] values) {
-		documentAO.insertBandDocument(values);
-	}
-	
-	/**
-	 * Inserta nodos de tipo genre, lo cual incluye directores, escritores
-	 * cantantes, etc.
-	 * @param values
-	 */
-	private void insertGenreDocument(IBinding[] values) {
-		documentAO.insertGenreDocument(values);
-	}
-
-	/**
-	 * Inserta la nodos cuya información define nodos de trabajos de 
-	 * producciones artísticas o intelectuales.
-	 * @param values
-	 */
-	private void insertArtWorkDocument(IBinding[] values) {
-		documentAO.insertArtWorkDocument(values);
-	}
-	
-	
 	//////////////////////////////////////////////////////////////////////
 	//   BLOQUE DE MÉTODOS DE INSERCIÓN EN BIG1                         //
 	//////////////////////////////////////////////////////////////////////
@@ -187,7 +105,7 @@ public class DocumentDataAccessManager {
 		text.setUserId(value.getNickName());
 		text.setMetadata(value.getMetadata());
 	
-		textAnalyticsAO.consumeText(text);
+		Big1AO.consumeText(text);
 	}
 	
 	/**
@@ -203,7 +121,7 @@ public class DocumentDataAccessManager {
 		web.setTimestamp(timestamp.getTime());
 		web.setUserId(value.getNickName());
 		web.setUrl(value.getMetadata());
-		textAnalyticsAO.consumeWeb(web);
+		Big1AO.consumeWeb(web);
 	}
 	
 	/**
@@ -218,7 +136,7 @@ public class DocumentDataAccessManager {
 		audio.setMetadata(value.getMetadata());
 		audio.setTimestamp(timestamp.getTime());
 		audio.setUserId(value.getNickName());
-		textAnalyticsAO.consumeAudio(audio);
+		Big1AO.consumeAudio(audio);
 	}
 	
 	/**
@@ -233,24 +151,7 @@ public class DocumentDataAccessManager {
 		video.setMetadata(value.getMetadata());
 		video.setTimestamp(timestamp.getTime());
 		video.setUserId(value.getNickName());
-		textAnalyticsAO.consumeVideo(video);
+		Big1AO.consumeVideo(video);
 	}
-	
-	public void consume(KafkaBean bean){
-		byte tipo=bean.getType();
-		switch(tipo){
-		case KafkaBean.KAFKA_AUDIO:
-			consumeAudio(bean);
-			break;
-		case KafkaBean.KAFKA_TEXTO:
-			consumeText(bean);
-			break;
-		case KafkaBean.KAFKA_VIDEO:
-			consumeVideo(bean);
-			break;
-		case KafkaBean.KAFKA_WEB:
-			consumeWeb(bean);
-			break;
-		}
-	}
+
 }

@@ -1,6 +1,6 @@
 package upc.bdam.recommender.consumer;
 
-import upc.bdam.recommender.documentDDBB.dao.DocumentDataAccessManager;
+import upc.bdam.recommender.Big1DDBB.dao.Big1AccessManager;
 import upc.bdam.recommender.graph.dao.GraphDataAccessManager;
 import upc.bdam.recommender.kafka.KafkaBean;
 
@@ -40,7 +40,7 @@ public class ConsumerManager {
 	 */
 	public void consume(KafkaBean bean) {
 		GraphDataAccessManager.getInstance().insertUserNode(bean);
-		DocumentDataAccessManager.getInstance().consume(bean);
+		Big1AccessManager.getInstance().consume(bean);
 	}
 
 }

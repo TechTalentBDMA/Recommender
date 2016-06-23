@@ -1,10 +1,8 @@
-package upc.bdam.recommender.documentDDBB.dao;
+package upc.bdam.recommender.Big1DDBB.dao;
 
 import org.bson.Document;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
@@ -15,18 +13,15 @@ import upc.bdam.recommender.consumer.schema.SchemaWebBean;
 
 /**
  * 
- * @author Grupo 9: 
- *           - Antolín Barrena Rico
- *           - Carles Castillejo
- *           - Raffaele Ghermandi
- *           - David Pérez Rodríguez
+ * @author Grupo 9: - Antolín Barrena Rico - Carles Castillejo - Raffaele
+ *         Ghermandi - David Pérez Rodríguez
  *
  */
-public class TextAnalyticsDataSource {
-	
-	//declaración de constantes de literales implicadas en la inserción.
-	public static final String TEXT_ANALYTICS_TIMESTAMP_BIG2="big2Timestamp";
-	public static final String TEXT_ANALYTICS_TIMESTAMP_ID="id";
+public class Big1DataSource {
+
+	// declaración de constantes de literales implicadas en la inserción.
+	public static final String TEXT_ANALYTICS_TIMESTAMP_BIG2 = "big2Timestamp";
+	public static final String TEXT_ANALYTICS_TIMESTAMP_ID = "id";
 
 	private static String TEXT_ANALYTICS_TIMESTAMP = "timestamp";
 	private static String TEXT_ANALYTICS_FILE_TYPE = "fileType";
@@ -42,27 +37,27 @@ public class TextAnalyticsDataSource {
 	private static String TEXT_ANALYTICS_VIDEO_COLLECTION = "videoSchema";
 	private static String TEXT_ANALYTICS_WEB_COLLECTION = "webSchema";
 
-	//declaraión de las listas de tipos de documentos
+
+
+	// declaraión de las listas de tipos de documentos
 	private MongoCollection<Document> videoCollection;
 	private MongoCollection<Document> audioCollection;
 	private MongoCollection<Document> textCollection;
 	private MongoCollection<Document> webCollection;
-	private MongoCollection<Document> texts;
-	
-	//conexiones a las instancias de MongoDB
+
+	// conexiones a las instancias de MongoDB
 	private MongoClient client;
 	private MongoDatabase big1;
-	private MongoDatabase big2;
 
 	/**
-	 * Constructor de clase. Se establecen las conexiones a las instancias de MongoDB
+	 * Constructor de clase. Se establecen las conexiones a las instancias de
+	 * MongoDB
 	 */
-	public TextAnalyticsDataSource() {
+	public Big1DataSource() {
 		client = new MongoClient();
 
 		// se crea la base de datos del ejercicio y sus colecciones
 		big1 = client.getDatabase("big1");
-		big2 = client.getDatabase("big2");
 
 		audioCollection = big1.getCollection(TEXT_ANALYTICS_AUDIO_COLLECTION);
 		textCollection = big1.getCollection(TEXT_ANALYTICS_TEXT_COLLECTION);
@@ -71,7 +66,9 @@ public class TextAnalyticsDataSource {
 	}
 
 	/**
-	 * Método especializado en la inserción de datos de audio procedentes de kafka en Big1
+	 * Método especializado en la inserción de datos de audio procedentes de
+	 * kafka en Big1
+	 * 
 	 * @param value
 	 */
 	public void insertAudioSchema(SchemaAudioBean value) {
@@ -88,7 +85,9 @@ public class TextAnalyticsDataSource {
 	}
 
 	/**
-	 * Método especializado en la inserción de datos de video procedentes de kafka en Big1
+	 * Método especializado en la inserción de datos de video procedentes de
+	 * kafka en Big1
+	 * 
 	 * @param value
 	 */
 	public void insertVideoSchema(SchemaVideoBean value) {
@@ -105,7 +104,9 @@ public class TextAnalyticsDataSource {
 	}
 
 	/**
-	 * Método especializado en la inserción de datos de Texto procedentes de kafka en Big1
+	 * Método especializado en la inserción de datos de Texto procedentes de
+	 * kafka en Big1
+	 * 
 	 * @param value
 	 */
 	public void insertTextSchema(SchemaTextBean value) {
@@ -123,7 +124,9 @@ public class TextAnalyticsDataSource {
 	}
 
 	/**
-	 * Método especializado en la inserción de datos web procedentes de kafka en Big1
+	 * Método especializado en la inserción de datos web procedentes de kafka en
+	 * Big1
+	 * 
 	 * @param value
 	 */
 	public void insertWebSchema(SchemaWebBean value) {
@@ -138,18 +141,4 @@ public class TextAnalyticsDataSource {
 
 		webCollection.insertOne(web);
 	}
-
-	/**
-	 * Método con el que se consulta si existen más inserciones en Big2 desde la última lectura realizada
-	 * @param timestamp
-	 * @return
-	 */
-	public FindIterable<Document> hayNuevosDatos(long timestamp) {
-		texts= big2.getCollection("texts");
-		BasicDBObject gtQuery = new BasicDBObject();
-		//gtQuery.put("id", new BasicDBObject("$gt", 7).append("$lt", 9));
-		gtQuery.put("id", new BasicDBObject("$gt", timestamp));
-		return texts.find(gtQuery);
-	}
-
 }
