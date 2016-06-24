@@ -209,7 +209,7 @@ public class OntologyDataAccessObject {
 		
 		String consulta=OntologyQueryManager.getInstance().getQuery(query);
 		String resultado=dbDataAccess.query(consulta);
-
+		System.out.println(resultado);
 		RdfArtWorkResult user = mapper.readValue(resultado.toString(), RdfArtWorkResult.class);
 		ArtWorkResult nodeBooks = user.getResult();
 		IBinding[] results = nodeBooks.getBindings();
@@ -225,7 +225,7 @@ public class OntologyDataAccessObject {
 		
 		String consulta=OntologyQueryManager.getInstance().getQuery(query);
 		String resultado=dbDataAccess.query(consulta);
-
+		System.out.println(resultado);
 		RdfAuthorResult user = mapper.readValue(resultado.toString(), RdfAuthorResult.class);
 		AuthorResult nodeBooks = user.getResult();
 		IBinding[] results = nodeBooks.getBindings();

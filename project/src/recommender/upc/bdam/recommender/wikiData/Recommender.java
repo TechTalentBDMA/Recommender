@@ -103,9 +103,10 @@ public class Recommender {
 			salida += "* Que acción de las siguientes desea realizar:  *\n";
 			salida += "* 1- Carga Inicial de grafos                    *\n";
 			salida += "* 2- Consumir kafka                             *\n";
-			salida += "* 3- analytics                                  *\n";
+			salida += "* 3- Analytics                                  *\n";
 			salida += "* 4- Actualizar graph database                  *\n";
-			salida += "* 5- Salir                                      *\n";
+			salida += "* 5- Recomendar                                 *\n";
+			salida += "* 6- Salir                                      *\n";
 			salida += "*************************************************\n";
 
 			System.out.println(salida);
@@ -119,7 +120,7 @@ public class Recommender {
 				continue;
 			}
 
-			if (opcion < 0 || opcion > 5) {
+			if (opcion <= 0 || opcion > 6) {
 				System.out.println("Opcion incorrecta. Elija de nuevo\n");
 				continue;
 
@@ -132,6 +133,8 @@ public class Recommender {
 			else if (opcion == 4)
 				updateGraphFromBig2();
 			else if (opcion == 5)
+				recomendacion();
+			else if (opcion == 6)
 				System.exit(0);
 
 		} while (true);
@@ -215,5 +218,17 @@ public class Recommender {
 		}
 	}
 	
+
+	/**
+	 * 
+	 */
+	private static void recomendacion() {
+		try {
+			System.out.println(GraphDataAccessManager.getInstance().recomendar());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

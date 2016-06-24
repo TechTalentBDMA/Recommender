@@ -253,4 +253,14 @@ public class GraphDataAccessObject {
 		dbDataAccess.commit();
 		dbDataAccess.closeTransaction();
 	}
+	
+	
+	/**
+	 * Se insertan los nodos web en la BBDD de conocimiento
+	 * @param value
+	 */
+	public String recomendar(){
+		return dbDataAccess.recomendar();
+
+	}
 }

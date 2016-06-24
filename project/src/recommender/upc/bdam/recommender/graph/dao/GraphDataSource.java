@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -42,7 +43,8 @@ import upc.bdam.recommender.ontology.json.relation.LeftRightRelation;
 public class GraphDataSource {
 
 	//declaración del nombre de la BBDD
-	static final String NEO4J_DDBB = "neo4JDB";
+	private static final String NEO4J_DDBB = "neo4JDB";
+	private static final String NEO4J_RECOMENDACION="recomendacion";
 
 	//acceso al fichero en el que se almacena la BBDD
 	File DB = new File(PropertiesLoader.getInstance().getProperty(NEO4J_DDBB));
@@ -307,6 +309,30 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());
 		node.setProperty(GraphDataAccessObject.BIG2_URL, value.getUri());		
 		node.setProperty(GraphDataAccessObject.BIG2_USER_ID, value.getUserId());
+	}
+	
 
+	/**
+	 * 
+	 * @return
+	 */
+	public String recomendar() {
+		StringBuffer resultado=new StringBuffer();
+		String query=PropertiesLoader.getInstance().getProperty(NEO4J_RECOMENDACION);
+
+
+		NodeProxy response = executeNeo4jQuery(query);
+		
+		if (response != null){
+			Iterable<String> keys=response.getPropertyKeys();
+			Iterator<String> iter=keys.iterator();
+			while (iter.hasNext())
+			{
+				String key=iter.next();
+				resultado.append(key+": "+response.getProperty(key)+"\n");
+			}
+
+		}	
+		return resultado.toString();
 	}
 }

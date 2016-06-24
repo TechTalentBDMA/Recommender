@@ -359,6 +359,7 @@ public class GraphDataAccessManager {
 		OntologyDataAccessObject dao=new OntologyDataAccessObject();
 		IBinding[] value;
 		value=dao.getGenres();
+		
 		insert(GraphDataAccessManager.GRAPH_GENRE_INSERT, value);
 		notifyAllObservers(value);
 	}
@@ -387,5 +388,12 @@ public class GraphDataAccessManager {
 			accessObject.insertBig2WebNode((Big2WebSchemaBean)value);
 
 		notifyAllObservers(value);		
+	}
+	
+	/**
+	 * Se inserta en BBDD las relaciones correspondientes a los films
+	 */
+	public String recomendar()throws Exception{
+		return accessObject.recomendar();
 	}
 }
