@@ -51,10 +51,10 @@ public class ConsumerLoop implements Runnable {
 		PropertiesLoader properties=PropertiesLoader.getInstance();
 		this.topics = topics;
 		Properties props = new Properties();
-		props.put(properties.getProperty(CONSUMER_SERVERS_PROPERTY), properties.getProperty(CONSUMER_SERVER_CONNECTION));
-		props.put(properties.getProperty(CONSUMER_ID_GROUP_PROPERTY), groupId);
-		props.put(properties.getProperty(CONSUMER_KEY_DESERIALIZER_PROPERTY), StringDeserializer.class.getName());
-		props.put(properties.getProperty(CONSUMER_VALUE_DESERIALIZER_PROPERTY), ByteArrayDeserializer.class.getName());
+		props.put(CONSUMER_SERVERS_PROPERTY, CONSUMER_SERVER_CONNECTION);
+		props.put(CONSUMER_ID_GROUP_PROPERTY, groupId);
+		props.put(CONSUMER_KEY_DESERIALIZER_PROPERTY, StringDeserializer.class.getName());
+		props.put(CONSUMER_VALUE_DESERIALIZER_PROPERTY, ByteArrayDeserializer.class.getName());
 		this.consumer = new KafkaConsumer<String, byte[]>(props);
 	}
 

@@ -70,21 +70,15 @@ public class Big1AccessManager {
 	 * @param bean
 	 */
 	public void consume(KafkaBean bean){
-		byte tipo=bean.getType();
-		switch(tipo){
-		case KafkaBean.KAFKA_AUDIO:
+		String tipo=bean.getMimeType();
+		if (tipo.contains("audio"))
 			consumeAudio(bean);
-			break;
-		case KafkaBean.KAFKA_TEXTO:
+		else if (tipo.contains("pdf"))
 			consumeText(bean);
-			break;
-		case KafkaBean.KAFKA_VIDEO:
+		else if (tipo.contains("video"))
 			consumeVideo(bean);
-			break;
-		case KafkaBean.KAFKA_WEB:
+		else
 			consumeWeb(bean);
-			break;
-		}
 	}
 
 	//////////////////////////////////////////////////////////////////////

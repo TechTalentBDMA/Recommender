@@ -1,5 +1,7 @@
 package upc.bdam.recommender.kafka;
 
+import upc.bdam.recommender.config.PropertiesLoader;
+
 /**
  * Bean de caracter general para el envío de información a la cola kafka
  * @author Grupo 9: 
@@ -15,8 +17,16 @@ public class KafkaBean {
 	public static final byte KAFKA_TEXTO=3;
 	public static final byte KAFKA_WEB=4;
 	
+	private static final String USER_DATA_NICK_NAME="nickName";
+	private static final String USER_DATA_NICK="name";
+	private static final String USER_DATA_SURNAME="surname";
+	private static final String USER_DATA_BORN="born";	
+	private static final String USER_DATA_SEX="sex";
+	private static final String USER_DATA_PROFESSION="profession";
+	private static final String USER_DATA_HOBBY="hobby";
+	private static final String USER_DATA_INTERESTED_IN="interestedIn";
+	
 	//declaración de atributos del usuario
-	private String nickName;
 	private String name;
 	private String surname;
 	private String born;
@@ -24,14 +34,56 @@ public class KafkaBean {
 	private String profession;
 	private String hobby;
 	private String interestedIn;
-
+	
 	//declaración de atributos	
 	private String metadata;
 	private String content;
-	private byte type=0;
+	private String id=new String();
+	private String status=new String();
 	private String mimeType=new String();
+	private String palabras=new String();
+	private String nickName=new String();;
+	private String fichero=new String();
+	private String url=new String();
+
+	
+	/**
+	 * En el constructor del bean, y a falta de interfaz gráfica que permita pedir 
+	 * los datos al usuario, los cargaremos de un fichero de configuración para la demo
+	 */
+	public KafkaBean(){
+		PropertiesLoader properties=PropertiesLoader.getInstance();
+		nickName=properties.getProperty(USER_DATA_NICK_NAME);
+		name=properties.getProperty(USER_DATA_NICK);
+		surname=properties.getProperty(USER_DATA_SURNAME);
+		born=properties.getProperty(USER_DATA_BORN);
+		sex=properties.getProperty(USER_DATA_SEX);
+		profession=properties.getProperty(USER_DATA_PROFESSION);
+		hobby=properties.getProperty(USER_DATA_HOBBY);
+		interestedIn=properties.getProperty(USER_DATA_INTERESTED_IN);		
+	}
 	
 	
+	public String getUrl() {
+		return url;
+	}
+
+	public String getPalabras() {
+		return palabras;
+	}
+
+	public void setPalabras(String palabras) {
+		this.palabras = palabras;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public String getFichero() {
+		return fichero;
+	}
+
 	public String getNickName() {
 		return nickName;
 	}
@@ -55,6 +107,17 @@ public class KafkaBean {
 	}
 	public String getInterestedIn() {
 		return interestedIn;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setFichero(String fichero) {
+		this.fichero = fichero;
 	}
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
@@ -87,13 +150,18 @@ public class KafkaBean {
 	public void setMimeType(String mimeType) {
 		this.mimeType = mimeType;
 	}
-	public byte getType() {
-		return type;
+	public String getType() {
+		return status;
 	}
-	public void setType(byte type) {
-		this.type = type;
+	public void setType(String type) {
+		this.status = type;
 	}
-
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
 	//DECLARACIÓN DE MÉTODOS GETTERS
 	public String getMetadata() {
 		return metadata;

@@ -113,8 +113,8 @@ public class Recommender {
 		int numConsumers = 1;
 
 		PropertiesLoader properties = PropertiesLoader.getInstance();
-		String groupId = properties.getProperty(ConsumerLoop.CONSUMER_GROUP_TOPIC);
-		List<String> topics = Arrays.asList(properties.getProperty(ConsumerLoop.CONSUMER_TOPIC));
+		String groupId =ConsumerLoop.CONSUMER_GROUP_TOPIC;
+		List<String> topics = Arrays.asList(ConsumerLoop.CONSUMER_TOPIC);
 		final ExecutorService executor = Executors.newFixedThreadPool(numConsumers);
 
 		final List<ConsumerLoop> consumers = new ArrayList<ConsumerLoop>();
