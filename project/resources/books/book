@@ -56,3 +56,4 @@ SELECT
 }
 #GROUP BY ?id ?title ?released
 ORDER BY ?title
+limit 100

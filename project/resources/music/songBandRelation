@@ -21,3 +21,4 @@ SELECT
 		FILTER NOT EXISTS {FILTER regex(?instanceOfLabel, 'human')} .
 }
 ORDER BY ?performerLabel ?songLabel
+limit 5

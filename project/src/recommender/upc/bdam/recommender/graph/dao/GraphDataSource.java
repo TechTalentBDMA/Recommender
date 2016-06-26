@@ -25,6 +25,7 @@ import upc.bdam.recommender.graphupdater.schema.Big2TextSchemaBean;
 import upc.bdam.recommender.graphupdater.schema.Big2VideoSchemaBean;
 import upc.bdam.recommender.graphupdater.schema.Big2WebSchemaBean;
 import upc.bdam.recommender.kafka.KafkaBean;
+import upc.bdam.recommender.ontology.json.GenericResult;
 import upc.bdam.recommender.ontology.json.artwork.ArtWork;
 import upc.bdam.recommender.ontology.json.author.Author;
 import upc.bdam.recommender.ontology.json.band.Band;
@@ -33,20 +34,18 @@ import upc.bdam.recommender.ontology.json.relation.LeftRightRelation;
 
 /**
  * Clase de acceso a la BBDD de conocmiento
- * @author Grupo 9: 
- *           - Antolín Barrena Rico
- *           - Carles Castillejo
- *           - Raffaele Ghermandi
- *           - David Pérez Rodríguez
+ * 
+ * @author Grupo 9: - Antolín Barrena Rico - Carles Castillejo - Raffaele
+ *         Ghermandi - David Pérez Rodríguez
  *
  */
 public class GraphDataSource {
 
-	//declaración del nombre de la BBDD
+	// declaración del nombre de la BBDD
 	private static final String NEO4J_DDBB = "neo4JDB";
-	private static final String NEO4J_RECOMENDACION="recomendacion";
+	private static final String NEO4J_RECOMENDACION = "recomendacion";
 
-	//acceso al fichero en el que se almacena la BBDD
+	// acceso al fichero en el que se almacena la BBDD
 	File DB = new File(PropertiesLoader.getInstance().getProperty(NEO4J_DDBB));
 	GraphDatabaseService graph = null;
 	Transaction tx = null;
@@ -60,7 +59,7 @@ public class GraphDataSource {
 	 */
 	private void init() {
 		DB = new File(PropertiesLoader.getInstance().getProperty(NEO4J_DDBB));
-		graph=new GraphDatabaseFactory().newEmbeddedDatabase(DB);
+		graph = new GraphDatabaseFactory().newEmbeddedDatabase(DB);
 	}
 
 	/**
@@ -83,11 +82,12 @@ public class GraphDataSource {
 	public void closeTransaction() {
 		tx.close();
 		tx = null;
-		graph.shutdown();
+		// graph.shutdown();
 	}
-	
+
 	/**
-	 * Método para leer queries sobre la BBDD 
+	 * Método para leer queries sobre la BBDD
+	 * 
 	 * @param query
 	 * @return
 	 * @throws IOException
@@ -112,6 +112,7 @@ public class GraphDataSource {
 
 	/**
 	 * Inserción de nodos de tipo género
+	 * 
 	 * @param genre
 	 * @param type
 	 */
@@ -125,6 +126,7 @@ public class GraphDataSource {
 
 	/**
 	 * Inserción de nodo tipo persona
+	 * 
 	 * @param author
 	 * @param type
 	 * @param subtype
@@ -137,11 +139,12 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.PERSON_NODE_BORN, author.getBorn().getValue());
 		node.setProperty(GraphDataAccessObject.PERSON_NODE_NAME, author.getName().getValue());
 		node.setProperty(GraphDataAccessObject.NODE_TYPE, type.name());
-		node.setProperty(GraphDataAccessObject.NODE_SUB_TYPE,subtype.name());
+		node.setProperty(GraphDataAccessObject.NODE_SUB_TYPE, subtype.name());
 	}
 
 	/**
 	 * Inserción de nodos de tipo nodo
+	 * 
 	 * @param band
 	 * @param type
 	 */
@@ -152,16 +155,17 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.BAND_NODE_ID, band.getId().getValue());
 		node.setProperty(GraphDataAccessObject.BAND_NODE_RELEASED, band.getReleased().getValue());
 		node.setProperty(GraphDataAccessObject.BAND_NODE_NAME, band.getName().getValue());
-		node.setProperty(GraphDataAccessObject.NODE_TYPE, type);
+		node.setProperty(GraphDataAccessObject.NODE_TYPE, type.name());
 	}
 
 	/**
 	 * Inserción de nodos de tipo artWork
+	 * 
 	 * @param artWork
 	 * @param type
 	 * @param subtype
 	 */
-	public void insertArtWorkNode(ArtWork artWork, NodeType type, ArtWorkNodeSubType subtype ) {
+	public void insertArtWorkNode(ArtWork artWork, NodeType type, ArtWorkNodeSubType subtype) {
 
 		Node node = graph.createNode(type);
 
@@ -174,13 +178,14 @@ public class GraphDataSource {
 
 	/**
 	 * Inserción de nodos de tipo usuario
+	 * 
 	 * @param user
 	 * @param type
 	 */
 	public void insertUserNode(KafkaBean user, NodeType type) {
 
 		Node node = graph.createNode(type);
-		
+
 		node.setProperty(GraphDataAccessObject.USER_DATA_NICK_NAME, user.getNickName());
 		node.setProperty(GraphDataAccessObject.USER_DATA_SURNAME, user.getSurname());
 		node.setProperty(GraphDataAccessObject.USER_DATA_NICK, user.getName());
@@ -190,30 +195,38 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.USER_DATA_HOBBY, user.getHobby());
 		node.setProperty(GraphDataAccessObject.USER_DATA_INTERESTED_IN, user.getInterestedIn());
 	}
-	
+
 	/**
 	 * Método para la inserción de relaciones entre nodos
+	 * 
 	 * @param relation
 	 * @param relationType
 	 * @param personType
 	 * @param label
 	 */
-	public void insertRelation(LeftRightRelation relation, RelationshipType relationType, NodeType personType, Label label) {
+	public void insertRelation(LeftRightRelation relation, RelationshipType relationType, NodeType personType,
+			Label label) {
 
-		String authorQuery = "MATCH (c1:"+personType+") WHERE c1.id='" + relation.getLeftId().getValue()
-				+ "' RETURN DISTINCT c1;";
-		String artWorkQuery = "MATCH (c1:"+label+") WHERE c1.id='" + relation.getRightId().getValue()
-				+ "' RETURN DISTINCT c1;";
+		if (relation != null) {
+			GenericResult leftId = relation.getLeftId();
+			GenericResult rightId = relation.getRightId();
+			if (leftId != null && rightId != null) {
+				String authorQuery = "MATCH (c1:" + personType + ") WHERE c1.id='" + leftId.getValue() + "' RETURN DISTINCT c1;";
+				String artWorkQuery = "MATCH (c1:" + label + ") WHERE c1.id='" + rightId.getValue() + "' RETURN DISTINCT c1;";
 
-		NodeProxy authorNode = executeNeo4jQuery(authorQuery);
-		NodeProxy artWorkNode = executeNeo4jQuery(artWorkQuery);
+				NodeProxy authorNode = executeNeo4jQuery(authorQuery);
+				NodeProxy artWorkNode = executeNeo4jQuery(artWorkQuery);
 
-		if (authorNode != null && artWorkNode != null)
-			authorNode.createRelationshipTo(artWorkNode, relationType);
+				if (authorNode != null && artWorkNode != null)
+					authorNode.createRelationshipTo(artWorkNode, relationType);
+			}
+		}
+
 	}
 
 	/**
 	 * Ejecución de consultas sobre la BBDD
+	 * 
 	 * @param query
 	 * @return
 	 */
@@ -228,11 +241,10 @@ public class GraphDataSource {
 		return resultado;
 
 	}
-	
-	
-	public void insertBig2Text(Big2TextSchemaBean value, TextAnalytics type){
+
+	public void insertBig2Text(Big2TextSchemaBean value, TextAnalytics type) {
 		Node node = graph.createNode(type);
-		
+
 		node.setProperty(GraphDataAccessObject.BIG2_AUTOR, value.getAutor());
 		node.setProperty(GraphDataAccessObject.BIG2_TIMESTAMP, value.getId());
 		node.setProperty(GraphDataAccessObject.BIG2_CLAVES, value.getClaves());
@@ -240,7 +252,7 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.BIG2_GENEROS, value.getGeneros());
 		node.setProperty(GraphDataAccessObject.BIG2_IDIOMA, value.getIdioma());
 		node.setProperty(GraphDataAccessObject.BIG2_PALABRAS, value.getPalabras());
-		node.setProperty(GraphDataAccessObject.BIG2_SUBJECT, value.getSubject());		
+		node.setProperty(GraphDataAccessObject.BIG2_SUBJECT, value.getSubject());
 		node.setProperty(GraphDataAccessObject.BIG2_ISBN, value.getIsbn());
 		node.setProperty(GraphDataAccessObject.BIG2_TEMAS, value.getTemas());
 		node.setProperty(GraphDataAccessObject.BIG2_NOMBRES, value.getNombres());
@@ -249,15 +261,16 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.BIG2_USER_ID, value.getUserId());
 		node.setProperty(GraphDataAccessObject.BIG2_YEAR, value.getYear());
 	}
-	
+
 	/**
 	 * Se insertan los nodos de audio en la BBDD de conocimiento
+	 * 
 	 * @param value
 	 */
-	public void insertBig2Audio(Big2AudioSchemaBean value, TextAnalytics type){
+	public void insertBig2Audio(Big2AudioSchemaBean value, TextAnalytics type) {
 
 		Node node = graph.createNode(type);
-		
+
 		node.setProperty(GraphDataAccessObject.BIG2_ALBUM, value.getAlbum());
 		node.setProperty(GraphDataAccessObject.BIG2_CLASIFICACION, value.getClasificacion());
 		node.setProperty(GraphDataAccessObject.BIG2_COLABORADORES, value.getColaboradores());
@@ -265,19 +278,20 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.BIG2_GENEROS, value.getGeneros());
 		node.setProperty(GraphDataAccessObject.BIG2_TIMESTAMP, value.getId());
 		node.setProperty(GraphDataAccessObject.BIG2_INTERPRETE, value.getInterprete());
-		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());		
+		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());
 		node.setProperty(GraphDataAccessObject.BIG2_USER_ID, value.getUserId());
 		node.setProperty(GraphDataAccessObject.BIG2_YEAR, value.getYear());
 	}
 
 	/**
 	 * Se insertan los nodos de video en la BBDD de conocimiento
+	 * 
 	 * @param value
 	 */
-	public void insertBig2Video(Big2VideoSchemaBean value, TextAnalytics type){
+	public void insertBig2Video(Big2VideoSchemaBean value, TextAnalytics type) {
 
 		Node node = graph.createNode(type);
-		
+
 		node.setProperty(GraphDataAccessObject.BIG2_ACTORES, value.getActores());
 		node.setProperty(GraphDataAccessObject.BIG2_TIMESTAMP, value.getId());
 		node.setProperty(GraphDataAccessObject.BIG2_CLASIFICACION, value.getClasificacion());
@@ -285,21 +299,21 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.BIG2_GENEROS, value.getGeneros());
 		node.setProperty(GraphDataAccessObject.BIG2_GUIONISTA, value.getGuionista());
 		node.setProperty(GraphDataAccessObject.BIG2_PRODUCTOR, value.getProductor());
-		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());		
+		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());
 		node.setProperty(GraphDataAccessObject.BIG2_USER_ID, value.getUserId());
 		node.setProperty(GraphDataAccessObject.BIG2_YEAR, value.getYear());
 
-	
 	}
-	
+
 	/**
 	 * Se insertan los nodos web en la BBDD de conocimiento
+	 * 
 	 * @param value
 	 */
-	public void insertBig2Web(Big2WebSchemaBean value, TextAnalytics type){
+	public void insertBig2Web(Big2WebSchemaBean value, TextAnalytics type) {
 
 		Node node = graph.createNode(type);
-		
+
 		node.setProperty(GraphDataAccessObject.BIG2_CLAVES, value.getClaves());
 		node.setProperty(GraphDataAccessObject.BIG2_DESCRIPCION, value.getDescripcion());
 		node.setProperty(GraphDataAccessObject.BIG2_GENEROS, value.getGeneros());
@@ -307,32 +321,29 @@ public class GraphDataSource {
 		node.setProperty(GraphDataAccessObject.BIG2_NOMBRES, value.getNombres());
 		node.setProperty(GraphDataAccessObject.BIG2_TEMAS, value.getTemas());
 		node.setProperty(GraphDataAccessObject.BIG2_TITULO, value.getTitulo());
-		node.setProperty(GraphDataAccessObject.BIG2_URL, value.getUri());		
+		node.setProperty(GraphDataAccessObject.BIG2_URL, value.getUri());
 		node.setProperty(GraphDataAccessObject.BIG2_USER_ID, value.getUserId());
 	}
-	
 
 	/**
 	 * 
 	 * @return
 	 */
 	public String recomendar() {
-		StringBuffer resultado=new StringBuffer();
-		String query=PropertiesLoader.getInstance().getProperty(NEO4J_RECOMENDACION);
-
+		StringBuffer resultado = new StringBuffer();
+		String query = PropertiesLoader.getInstance().getProperty(NEO4J_RECOMENDACION);
 
 		NodeProxy response = executeNeo4jQuery(query);
-		
-		if (response != null){
-			Iterable<String> keys=response.getPropertyKeys();
-			Iterator<String> iter=keys.iterator();
-			while (iter.hasNext())
-			{
-				String key=iter.next();
-				resultado.append(key+": "+response.getProperty(key)+"\n");
+
+		if (response != null) {
+			Iterable<String> keys = response.getPropertyKeys();
+			Iterator<String> iter = keys.iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				resultado.append(key + ": " + response.getProperty(key) + "\n");
 			}
 
-		}	
+		}
 		return resultado.toString();
 	}
 }

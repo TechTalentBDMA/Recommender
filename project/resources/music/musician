@@ -47,3 +47,4 @@ SELECT
 }
 #GROUP BY ?id ?name ?born
 ORDER BY ?name
+limit 100

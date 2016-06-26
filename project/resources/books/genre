@@ -58,3 +58,4 @@ SELECT
 }
 GROUP BY ?genre ?genreLabel
 ORDER BY ?genreLabel
+limit 100

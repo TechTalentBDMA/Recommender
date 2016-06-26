@@ -81,3 +81,4 @@ SELECT
 		}
 }
 ORDER BY ?name
+limit 100

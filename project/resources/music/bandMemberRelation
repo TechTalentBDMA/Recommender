@@ -14,3 +14,4 @@ SELECT
   		FILTER (lang(?bandLabel) = 'en') .
 }
 ORDER BY ?bandLabel ?memberOfLabel
+limit 5

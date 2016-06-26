@@ -16,3 +16,4 @@ WHERE
 		SERVICE wikibase:label {bd:serviceParam wikibase:language 'en' .}
 }
 ORDER BY ?filmLabel ?directorLabel
+limit 5

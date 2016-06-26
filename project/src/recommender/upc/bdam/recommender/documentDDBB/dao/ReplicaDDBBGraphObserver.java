@@ -1,12 +1,12 @@
 package upc.bdam.recommender.documentDDBB.dao;
 
-import upc.bdam.recommender.documentDDBB.dao.json.Band;
-import upc.bdam.recommender.documentDDBB.dao.json.Genre;
 import upc.bdam.recommender.graph.dao.GraphDDBBObserver;
 import upc.bdam.recommender.graphupdater.schema.Big2SGraphGuardSchema;
 import upc.bdam.recommender.kafka.KafkaBean;
 import upc.bdam.recommender.ontology.json.IBinding;
 import upc.bdam.recommender.ontology.json.author.Author;
+import upc.bdam.recommender.ontology.json.band.Band;
+import upc.bdam.recommender.ontology.json.genre.Genre;
 
 /**
  * Observer de las acciones realizadas en la BBDD ontológica. Sirve para

@@ -15,3 +15,4 @@ SELECT
    		FILTER(lang(?artWorkTitle) = 'en') .
 }
 ORDER BY ?authorName ?artWorkTitle
+limit 5

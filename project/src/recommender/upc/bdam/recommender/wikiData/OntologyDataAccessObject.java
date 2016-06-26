@@ -241,7 +241,7 @@ public class OntologyDataAccessObject {
 		
 		String consulta=OntologyQueryManager.getInstance().getQuery(query);
 		String resultado=dbDataAccess.query(consulta);
-
+		System.out.println(resultado);
 		RdfBandResult band = mapper.readValue(resultado.toString(), RdfBandResult.class);
 		BandResult nodeBand = band.getResult();
 		IBinding[] results = nodeBand.getBindings();
@@ -257,7 +257,7 @@ public class OntologyDataAccessObject {
 		
 		String consulta=OntologyQueryManager.getInstance().getQuery(query);
 		String resultado=dbDataAccess.query(consulta);
-
+		System.out.println(resultado);
 		RdfGenreResult user = mapper.readValue(resultado.toString(), RdfGenreResult.class);
 		GenreResult nodeGenre = user.getResult();
 		IBinding[] results = nodeGenre.getBindings();
@@ -273,7 +273,7 @@ public class OntologyDataAccessObject {
 		
 		String consulta=OntologyQueryManager.getInstance().getQuery(query);
 		String resultado=dbDataAccess.query(consulta);
-
+		System.out.println(resultado);
 		RdfRelationResult user = mapper.readValue(resultado.toString(), RdfRelationResult.class);
 		RelationResult nodeBooks = user.getResult();
 		IBinding[] results = nodeBooks.getBindings();

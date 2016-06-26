@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import upc.bdam.recommender.config.PropertiesLoader;
+import upc.bdam.recommender.documentDDBB.dao.ReplicaDDBBGraphObserver;
 import upc.bdam.recommender.graph.dao.GraphDataAccessManager;
 import upc.bdam.recommender.graphupdater.schema.TextAnalyticsGraphGuard;
 import upc.bdam.recommender.kafka.ConsumerLoop;
@@ -34,66 +35,12 @@ public class Recommender {
 
 	}
 
-
-//	private static void getBooks() throws Exception {
-//		OntologyDataAccessObject dao = new OntologyDataAccessObject();
-//
-//		IBinding[] value = dao.getBooks();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_BOOK_INSERT, value);
-//
-//		value = dao.getWriters();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_WRITER_INSERT, value);
-//
-//		value = dao.getWriterBookRelation();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_WRITER_BOOK_RELATION_INSERT, value);
-//
-//		System.out.println(value.length);
-//	}
-
-
-//	private static void getFilms() throws Exception {
-//		OntologyDataAccessObject dao = new OntologyDataAccessObject();
-//		IBinding[] value = dao.getActors();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_ACTOR_INSERT, value);
-//
-//		value = dao.getDirector();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_DIRECTOR_INSERT, value);
-//
-//		value = dao.getFilms();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_FILM_INSERT, value);
-//
-//		value = dao.getActorFilmRelation();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_ACTOR_FILM_RELATION_INSERT, value);
-//
-//		value = dao.getDirectorFilmRelation();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_DIRECTOR_FILM_RELATION_INSERT, value);
-//	}
-
-
-//	private static void getSongs() throws Exception {
-//		OntologyDataAccessObject dao = new OntologyDataAccessObject();
-//		IBinding[] value = dao.getBand();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_BAND_INSERT, value);
-//
-//		value = dao.getMusician();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_MUSICIAN_INSERT, value);
-//
-//		value = dao.getSongs();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_SONG_INSERT, value);
-//
-//		value = dao.getBandMemberRelation();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_BAND_MEMBER_RELATION_INSERT, value);
-//
-//		value = dao.getSongPerformerRelation();
-//		GraphDataAccessManager.getInstance().insert(GraphDataAccessManager.GRAPH_SONG_PERFORMER_RELATION_INSERT, value);
-//
-//	}
-
 	/**
 	 * Muestra un pequeño menú para poder observar cada una de las cargas de
 	 * forma independiente
 	 */
 	private static void menu() {
+		GraphDataAccessManager.getInstance().attach(new ReplicaDDBBGraphObserver());
 
 		int opcion = 0;
 
@@ -150,7 +97,7 @@ public class Recommender {
 			GraphDataAccessManager.getInstance().getBooks();
 			GraphDataAccessManager.getInstance().getFilms();
 			GraphDataAccessManager.getInstance().getSongs();
-			GraphDataAccessManager.getInstance().getBookRelations();;
+			GraphDataAccessManager.getInstance().getBookRelations();
 			GraphDataAccessManager.getInstance().getFilmsRelations();
 			GraphDataAccessManager.getInstance().getMusicRelations();			
 		} catch (Exception e) {

@@ -359,7 +359,6 @@ public class GraphDataAccessManager {
 		OntologyDataAccessObject dao=new OntologyDataAccessObject();
 		IBinding[] value;
 		value=dao.getGenres();
-		
 		insert(GraphDataAccessManager.GRAPH_GENRE_INSERT, value);
 		notifyAllObservers(value);
 	}

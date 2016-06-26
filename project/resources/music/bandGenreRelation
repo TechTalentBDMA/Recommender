@@ -53,3 +53,4 @@ SELECT
 		}
 }
 ORDER BY ?artWorkTitle ?genreName
+limit 5

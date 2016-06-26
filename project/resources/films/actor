@@ -20,3 +20,4 @@ SELECT
 }
 GROUP BY ?actor ?actorLabel
 ORDER BY ?actorLabel
+limit 100

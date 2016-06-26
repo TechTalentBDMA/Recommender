@@ -13,3 +13,4 @@ SELECT
 }
 GROUP BY ?song ?songLabel
 ORDER BY ?songLabel
+limit 100

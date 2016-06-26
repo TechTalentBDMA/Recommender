@@ -13,3 +13,4 @@ SELECT
 }
 GROUP BY ?film ?filmLabel
 ORDER BY ?filmLabel
+limit 100
