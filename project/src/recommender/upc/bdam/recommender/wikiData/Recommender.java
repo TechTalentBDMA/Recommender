@@ -93,8 +93,9 @@ public class Recommender {
 	 */
 	private static void initialLoad() {
 		try {
-			GraphDataAccessManager.getInstance().getGenres();
 			GraphDataAccessManager.getInstance().getBooks();
+
+			GraphDataAccessManager.getInstance().getGenres();
 			GraphDataAccessManager.getInstance().getFilms();
 			GraphDataAccessManager.getInstance().getSongs();
 			GraphDataAccessManager.getInstance().getBookRelations();
