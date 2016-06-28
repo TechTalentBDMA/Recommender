@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import upc.bdam.recommender.config.PropertiesLoader;
 import upc.bdam.recommender.documentDDBB.dao.ReplicaDDBBGraphObserver;
@@ -146,7 +148,48 @@ public class Recommender {
 	 */
 	private static void analytics(){
 		try {
-			Runtime.getRuntime().exec("C:\\Program Files\\R\\R-3.2.5\\bin\\Rscript.exe C:\\TextMining\\CodigoR\\TADocsV05.R");
+			   Stream<String> lines;
+			   Iterator<String> iter;
+			   
+		       Process p =Runtime.getRuntime().exec("C:\\Program Files\\R\\R-3.2.5\\bin\\Rscript.exe C:\\TextMining\\CodigoR\\TADocsV1.R");
+			
+		       //se coge la salida error del proceso
+		       BufferedReader error = new BufferedReader(
+		               new InputStreamReader(p.getErrorStream()) );
+		       
+		       //se coge la salida estándar del procesos
+		       BufferedReader out = new BufferedReader(
+		               new InputStreamReader(p.getInputStream()));
+		       
+		       //se comprueba si hay líneas en la salida estándar
+		       lines=out.lines();
+		       
+		       //se recorren las líneas de la salida estándar
+		       iter=lines.iterator();
+		       if (iter.hasNext()){
+		    	   System.out.println("Salida del analytics es:\n");
+			       while (iter.hasNext()) {
+				         System.out.println(iter.next());
+				       }
+		       }
+		       
+		       //se comprueba si hay líneasd e error
+		       lines=error.lines();
+		       
+		       //se recorren las líneas de error
+		       iter=lines.iterator();
+		       if (iter.hasNext()){
+		    	   System.out.println("Texto de errores en Analytics:\n");
+			       while (iter.hasNext()) {
+				         System.out.println(iter.next());
+				       }
+		       }			
+
+		       
+		       //se cierran las salidas del proceso
+		       out.close();
+		       error.close();
+		       
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
